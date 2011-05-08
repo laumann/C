@@ -50,21 +50,17 @@ t_insert(struct tree_node **root, int V)
 void
 t_walk(struct tree_node *root_p)
 {
-	static int depth = 0;
 	if (!root_p)
 		return;
-	/*depth++;*/
 	t_walk(root_p->left_p);
-	/*printf("[%*d%*c]\n", depth, root_p->data, depth, '\0');*/
 	printf(" %d ", root_p->data);
 	t_walk(root_p->right_p);
-	/*depth--;*/
 }
 
 int
 main(int argc, char** argv)
 {
-	printf("This is a binary tree implementation, %s\n run on: %s %s\n", __FILE__, __DATE__, __TIME__);
+	printf("This is:\t%s\nCompiled on:\t%s %s\n\n", __FILE__, __DATE__, __TIME__);
 
 	struct tree_node *tp, *root_p = 0;
 	int i;
