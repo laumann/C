@@ -9,33 +9,37 @@ struct list_element {
 int
 l_delete(struct list_element **root, int key)
 {
-	struct list_element *obsolete, *dummy;
-	struct list_element **it = root;
+	/* Use pointer to root */
+	struct list_element *doomed, *current = *root;
 
-	/* Scan the list */
-	while (*it) {
-		printf("In loop: %d\n", (*it)->data);
-		if ((*it)->data == key) {
-			/* Delete! */
-			printf("Deleting %d, next_p=%d, prev_p=%d\n",
-				(*it)->data, (*it)->next_p->data, (*it)->prev_p->data);
-			dummy = (*it)->next_p;
+	while (current) {
+		if (current->data == key) {
+			if (!current->prev_p) {/* First element */
+			/*	printf("Deleting head of list: %d, new head=%d\n",
+					current->data, current->next_p->data);	*/
+				*root = current->next_p;
+				(*root)->prev_p = NULL;	
+			}
+			else if (!current->next_p) { /* Last element */
+			/*	printf("Deleting last element: %d, prev_p=%d\n", 
+					current->data, current->prev_p->data);*/
+				current->prev_p->next_p = NULL;
+			}
+			else { /* Somewhere in the middle */
+			/*	printf("Deleting in the middle: %d, next_p: %d, prev_p: %d\n",
+					current->data, current->next_p->data, current->prev_p->data);*/
+				current->prev_p->next_p = current->next_p;
+				current->next_p->prev_p = current->prev_p;
+			}
 
-			dummy->prev_p /* (*it) */ = (*it)->prev_p;
-		/*	(*it)->next_p->prev_p = (*it)->prev_p;*/
-			(*it)->prev_p->next_p = dummy /*(*it)->next_p*/;
-
-			obsolete = *it;
-			it = &dummy;
-			free(obsolete);
+			doomed = current;
+			current = current->next_p;
+			free(doomed);
 			continue;
-			
-			/**it = pp;  Set it to previous node - will be incremented to next_p in following step */
 		}
-		it = &(*it)->next_p;
+		current = current->next_p;
 	}
-
-	return 0;	
+	return 0;
 }
 
 void
@@ -99,8 +103,14 @@ main()
 	printf("Print:         "); l_print(root);
 	printf("Reverse print: "); l_print_reverse(root);
 
-	l_delete(&root, 6);
-	printf("Print after delete: "); l_print(root);
+	l_delete(&root, 6); /* Delete element in middle (twice) */
+	printf("Print after delete (6): "); l_print(root);
+
+	l_delete(&root, 4); /* Delete first */
+	printf("Print after delete (4): "); l_print(root);
+
+	l_delete(&root, 7); /* Delete last */
+	printf("Print after delete (7): "); l_print(root);
 
 	exit(EXIT_SUCCESS);
 }

@@ -64,6 +64,8 @@ t_walk(struct tree_node *root_p)
 int
 main(int argc, char** argv)
 {
+	printf("This is a binary tree implementation, %s\n run on: %s %s\n", __FILE__, __DATE__, __TIME__);
+
 	struct tree_node *tp, *root_p = 0;
 	int i;
 
