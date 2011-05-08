@@ -11,33 +11,29 @@ l_delete(struct list_element **root, int key)
 {
 	/* Use pointer to root */
 	struct list_element *doomed, *current = *root;
+	short delete = 0;
 
-	while (current) {
+	for ( ; current ; ) {
 		if (current->data == key) {
-			if (!current->prev_p) {/* First element */
-			/*	printf("Deleting head of list: %d, new head=%d\n",
-					current->data, current->next_p->data);	*/
+			if (!current->prev_p) {
 				*root = current->next_p;
-				(*root)->prev_p = NULL;	
+				(*root)->prev_p = NULL;
 			}
-			else if (!current->next_p) { /* Last element */
-			/*	printf("Deleting last element: %d, prev_p=%d\n", 
-					current->data, current->prev_p->data);*/
+			else if (!current->next_p) {
 				current->prev_p->next_p = NULL;
 			}
-			else { /* Somewhere in the middle */
-			/*	printf("Deleting in the middle: %d, next_p: %d, prev_p: %d\n",
-					current->data, current->next_p->data, current->prev_p->data);*/
+			else {
 				current->prev_p->next_p = current->next_p;
 				current->next_p->prev_p = current->prev_p;
 			}
-
 			doomed = current;
-			current = current->next_p;
-			free(doomed);
-			continue;
+			delete = 1;
 		}
 		current = current->next_p;
+		if (delete) {
+			free(doomed);
+			delete = 0;
+		}
 	}
 	return 0;
 }
