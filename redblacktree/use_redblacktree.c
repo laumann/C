@@ -16,7 +16,7 @@ main()
 	}
 	/* 4 2 6 3 1 5 7 */
 
-	for (i=8; i<30; i++) {
+	for (i=30; i>7; i--) {
 		tree_insert(tree, i);
 	}
 
