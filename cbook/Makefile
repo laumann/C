@@ -1,5 +1,3 @@
-
-
 CC=gcc
 CFLAGS=-Wall
 EXERCISE4_3=exercise4_3.c exercise4_2.c
@@ -21,7 +19,7 @@ $(addsuffix $(HELP_SUFFIX), $(PROGRAMS)): help_pretext
 help_pretext:
 	@echo "This is a library of small C programs found in 'The C Book'."
 	@echo ""
-	@echo "Here the available targets:"
+	@echo "Here are the available targets:"
 	@echo ""
 
 all: $(PROGRAMS)
