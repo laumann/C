@@ -26,7 +26,6 @@ new_tree(struct tree **t)
 void
 tree_insert(struct tree *tree, int data)
 {
-	printf("\n tree_insert(%d) ", data);
 	struct node *n,	*p;
 	tree_p = &tree;
 
@@ -36,6 +35,8 @@ tree_insert(struct tree *tree, int data)
 	n->left_child 	= NULL;
 	n->right_child 	= NULL;
 	n->parent	= NULL;
+
+	(*tree_p)->size++;
 
 	if (!((*tree_p)->root)) {
 		(*tree_p)->root = n;
@@ -47,34 +48,31 @@ tree_insert(struct tree *tree, int data)
 	for (;;) {
 		if (n->data < p->data) {
 			if (!(p->left_child)) {
-	/*			printf(" [p(%d)->left  = %d] ", p->data, n->data);*/
 				p->left_child = n;
 				n->parent = p;
 				insert_case1(n);
-				return;
+				printf("\n");
+				break;
 			}
-	/*		printf(" [p = p->left_child] ");*/
 			p = p->left_child;
 		}
 		else {
 			if (!(p->right_child)) {
-	/*			printf(" [p(%d)->right = %d] ", p->data, n->data);*/
 				p->right_child = n;
 				n->parent = p;
 				insert_case1(n);
-				return;
+				printf("\n");
+				break;
 			}
-	/*		printf(" [p = p->right_child] ");*/
 			p = p->right_child;
 		}
 	}
-	(*tree_p)->size++;
 } 
 
 void
 in_order_traverse(struct tree *tree)
 {
-	printf("Root is '%d'\n", tree->root->data);
+	printf("Root is '%d' (size: %d)\n", tree->root->data, tree->size);
 	traverse_i(tree->root);
 }
 
@@ -86,8 +84,8 @@ traverse_i(struct node *n)
 		return;
 	depth++;
 	traverse_i(n->left_child);
-	printf("[%*d%*c]\n", depth, n->data, depth, '\0');
-/*	printf(" %d ", n->data);*/
+/*	printf("[%*d%*c]\n", depth, n->data, depth, '\0');*/
+	printf(" %d ", n->data);
 	traverse_i(n->right_child);
 	depth--;
 }
@@ -114,11 +112,8 @@ paran_v(struct node *n)
 static void
 insert_case1(struct node *n)
 {
-/*	printf(" insert_case1(%d) ", n->data);*/
-	if (!n->parent) {
-/*		printf(" n->color = BLACK.\n");*/
+	if (!n->parent)
 		n->color = BLACK;
-	}
 	else
 		insert_case2(n);
 }
@@ -126,11 +121,8 @@ insert_case1(struct node *n)
 static void
 insert_case2(struct node *n)
 {
-/*	printf(" insert_case2(%d) ", n->data);*/
-	if (n->parent->color == BLACK) {
-/*		printf(" n->parent->color == BLACK.\n");*/
+	if (n->parent->color == BLACK)
 		return;
-	}
 	else
 		insert_case3(n);
 }
@@ -138,7 +130,6 @@ insert_case2(struct node *n)
 static void
 insert_case3(struct node *n)
 {
-/*	printf(" insert_case3(%d) ", n->data);*/
 	struct node *u, *g;
 
 	u = uncle(n);
@@ -158,7 +149,6 @@ insert_case3(struct node *n)
 static void
 insert_case4(struct node *n)
 {
-/*	printf(" insert_case4(%d) ", n->data);*/
 	struct node *g;
 
 	g = grandparent(n);
@@ -177,8 +167,6 @@ insert_case4(struct node *n)
 static void
 insert_case5(struct node *n)
 {
-/*	printf(" insert_case5(%d) ", n->data);*/
-
 	struct node *g;
 
 	g = grandparent(n);
@@ -190,7 +178,6 @@ insert_case5(struct node *n)
 		rotate_right(g);
 	else
 		rotate_left(g);
-/*	printf(".\n");*/
 }
 
 /*
@@ -205,7 +192,7 @@ a   b        b   c
 static void
 rotate_right(struct node *Q)
 {
-	printf(" right_rotate(%d) ", Q->data);
+	printf(" rr ");
 	/* The given node (Q) becomes the right child of its left child (P) */
 	struct node
 		*P =  Q->left_child,
@@ -241,7 +228,7 @@ a   b        b   c
 static void
 rotate_left(struct node *P)
 {
-	printf(" rotate_left(%d) ", P->data);
+	printf(" rl ");
 	struct node
 		*Q =  P->right_child,
 		*b = (P->right_child) ? P->right_child->left_child : NULL;
@@ -268,7 +255,6 @@ rotate_left(struct node *P)
 static struct node *
 grandparent(struct node *n)
 {
-/*	printf(" grandparent(%d) ", n->data);*/
 	if (n && n->parent)
 		return n->parent->parent;
 	else
@@ -278,7 +264,6 @@ grandparent(struct node *n)
 static struct node *
 uncle(struct node *n)
 {
-/*	printf(" uncle(%d) ", n->data);*/
 	struct node *g = grandparent(n);
 	if (!g)
 		return NULL;
