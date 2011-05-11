@@ -10,6 +10,7 @@ PROGRAMS=ex4_3 ex4_4 exp5_1 exp5_3 \
 # Help printing business
 HELP_SUFFIX=_help
 .PHONY: help $(addsuffix _help, $(PROGRAMS)) help_pretext
+
 help: $(addsuffix _help, $(PROGRAMS))
 	@echo ""
 
@@ -21,7 +22,9 @@ help_pretext:
 	@echo ""
 	@echo "Here are the available targets:"
 	@echo ""
+	@echo "   all			Make all targets"
 
+# The real targets
 all: $(PROGRAMS)
 
 ex4_3: $(EXERCISE4_3)
@@ -56,29 +59,29 @@ exp5_16: example5_16.c
 ex5_5: exercise5_5.c
 	$(CC) $(CFLAGS) -o ex5_5 exercise5_5.c
 
-# Chapter 6, examples
+# Chapter 6, examples $@ == target name from now on
 exp6_2: example6_2.c
-	$(CC) $(CFLAGS) -o exp6_2 example6_2.c
+	$(CC) $(CFLAGS) -o $@ example6_2.c
 
 exp6_7: example6_7.c
-	$(CC) $(CFLAGS) -o exp6_7 example6_7.c
+	$(CC) $(CFLAGS) -o $@ example6_7.c
 
 exp6_14: example6_14.c
-	$(CC) $(CFLAGS) -o exp6_14 example6_14.c
+	$(CC) $(CFLAGS) -o $@ example6_14.c
 
 ex6_9: exercise6_9.c
-	$(CC) $(CFLAGS) -o ex6_9 exercise6_9.c
+	$(CC) $(CFLAGS) -o $@ exercise6_9.c
 
 # Chapter 9, examples
 exp9_1: example9_1.c
-	$(CC) $(CFLAGS) -o exp9_1 example9_1.c
+	$(CC) $(CFLAGS) -o $@ example9_1.c
 
 exp9_4: example9_4.c
-	$(CC) $(CFLAGS) -o exp9_4 example9_4.c
+	$(CC) $(CFLAGS) -o $@ example9_4.c
 
 # My own programs
 use_sinecosine: sinecosine.c sinecosine.h use_sinecosine.c
-	$(CC) $(CFLAGS) -o use_sinecosine use_sinecosine.c sinecosine.c
+	$(CC) $(CFLAGS) -o $@ use_sinecosine.c sinecosine.c
 
 .PHONY: clean
 clean:
