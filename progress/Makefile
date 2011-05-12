@@ -1,8 +1,11 @@
 CC=gcc
 CFLAGS=-Wall
+
 H_FILES=bswap.h git-compat-util.h progress.h
 C_FILES=progress.c use_progress.c
+
 BIN=use_progress
+BINDIR=bin
 
 .PHONY: help
 help:
@@ -17,12 +20,24 @@ help:
 	@echo ""
 	@echo "to see an example program."
 
-example: $(C_FILES) $(H_FILES)
-	$(CC) $(CFLAGS) -o $(BIN) $(C_FILES)
+.PHONY: example
+example: $(BINDIR)/$(BIN)
 
-run_example: example
-	./$(BIN)
+.PHONY: run_example
+run_example: | example
+	$(BINDIR)/$(BIN)
+
+MAIN=$(BINDIR)/$(BIN)
+$(MAIN): $(C_FILES) $(H_FILES) | $(BINDIR)
+	$(CC) $(CFLAGS) $(C_FILES) -o $@
+
+$(BINDIR):
+	mkdir $(BINDIR)
+
+print: *.c
+	lpr -p $?
+	touch print
 
 .PHONY: clean
 clean:
-	@rm -v $(BIN)
+	@rm -rfv $(BINDIR)
