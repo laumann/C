@@ -146,7 +146,7 @@ print_line(unsigned mask, const char *fname, int lnno, const char *text)
 	if (mask & CFLAG)
 		return;
 	if (mask & NFLAG)
-		printf("%s: ", *fname ? fname : "stdin");
+		printf("%s: ", (fname && *fname) ? fname : "stdin");
 	if (mask & LFLAG)
 		printf("%4d:\t", lnno);
 	printf("%s", text);
