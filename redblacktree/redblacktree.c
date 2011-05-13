@@ -192,7 +192,7 @@ a   b        b   c
 static void
 rotate_right(struct node *Q)
 {
-	printf(" rr ");
+	printf("rr ");
 	/* The given node (Q) becomes the right child of its left child (P) */
 	struct node
 		*P =  Q->left_child,
@@ -228,7 +228,7 @@ a   b        b   c
 static void
 rotate_left(struct node *P)
 {
-	printf(" rl ");
+	printf("rl ");
 	struct node
 		*Q =  P->right_child,
 		*b = (P->right_child) ? P->right_child->left_child : NULL;
