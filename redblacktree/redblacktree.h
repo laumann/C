@@ -3,8 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
-#define INTERNAL	static
+#include <pthread.h>
 
 #define RED	1
 #define BLACK	0
@@ -12,6 +11,8 @@
 struct tree {
 	struct node *root;
 	int size;
+	pthread_mutex_t	mutex;
+	pthread_cond_t	cond;
 };
 
 

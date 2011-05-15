@@ -63,16 +63,15 @@ main(int argc, char** argv)
 	printf("This is:\t%s\nCompiled on:\t%s %s\n\n", __FILE__, __DATE__, __TIME__);
 
 	struct tree_node *tp, *root_p = 0;
-	int i;
+	int i, *np;
 
 	/* 4 2 6 1 3 5 7 */
-	t_insert(&root_p, 4);
-	t_insert(&root_p, 2);
-	t_insert(&root_p, 6);
-	t_insert(&root_p, 1);
-	t_insert(&root_p, 3);
-	t_insert(&root_p, 5);
-	t_insert(&root_p, 7);
+	int numbers[] = { 4, 2, 6, 1, 3, 5, 7, NULL };
+
+	printf("Inserted order:  4  2  6  1  3  5  7\n\n");
+
+	for (np = &numbers[0]; *np; np++)
+		t_insert(&root_p, *np);
 
 	for (i=1; i<9; i++)
 		if ( (tp = t_search(root_p, i)) )

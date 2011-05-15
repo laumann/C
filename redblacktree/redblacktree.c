@@ -1,5 +1,7 @@
 #include "redblacktree.h"
 
+#define LINDA_ALS	2550842
+
 static struct node *grandparent(struct node*);
 static struct node *uncle(struct node*);
 static void insert_case1(struct node*);
@@ -19,6 +21,17 @@ void
 new_tree(struct tree **t)
 {
 	*t = (struct tree*)malloc(sizeof(struct tree));
+
+	/* Initialise mutex */
+	pthread_mutexattr_t attr;
+	pthread_mutexattr_init(&attr);
+	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+	pthread_mutex_init(&(*t)->mutex, &attr);
+	pthread_mutexattr_destroy(&attr);
+
+	/* Initialise cond */
+	pthread_cond_init(&(*t)->cond, NULL);
+
 	(*t)->size = 0;
 	(*t)->root = NULL;
 }
@@ -36,11 +49,15 @@ tree_insert(struct tree *tree, int data)
 	n->right_child 	= NULL;
 	n->parent	= NULL;
 
+	pthread_mutex_lock(&(*tree_p)->mutex);
+
 	(*tree_p)->size++;
 
 	if (!((*tree_p)->root)) {
 		(*tree_p)->root = n;
 		insert_case1(n);
+		pthread_cond_signal(&(*tree_p)->cond);
+		pthread_mutex_unlock(&(*tree_p)->mutex);
 		return;
 	}
 
@@ -67,6 +84,8 @@ tree_insert(struct tree *tree, int data)
 			p = p->right_child;
 		}
 	}
+	pthread_cond_signal(&(*tree_p)->cond);
+	pthread_mutex_unlock(&(*tree_p)->mutex);
 } 
 
 void
@@ -85,7 +104,7 @@ traverse_i(struct node *n)
 	depth++;
 	traverse_i(n->left_child);
 /*	printf("[%*d%*c]\n", depth, n->data, depth, '\0');*/
-	printf(" %d ", n->data);
+	printf("%d ", n->data);
 	traverse_i(n->right_child);
 	depth--;
 }
