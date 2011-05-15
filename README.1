@@ -1,4 +1,5 @@
-.TH laumann 1 "May 2011" "Version 0.1"
+."TH [NAME of PROGRAM] [SECTION NUMBER] [CENTER FOOTER] [LEFT FOOTER] [CENTER HEADER]
+.TH laumann 1 "May 2011" "Version 0.1" "Laumann C Library"
 .SH NAME
 Laumann C Library \- A library of C programs, created for/while learning C by Thomas B. Laumann Jespersen
 .SH SYNOPSIS
@@ -57,11 +58,31 @@ A binary search tree implementation.
 .B linkedlist
 A (doubly) linked list implementation.
 .TP
+.B recursive_descent_parser
+or
+.BR rdep ,
+a recursive descent expression parser (for standard C integer expressions).
+.TP
 .B pattern
 A pattern matching program. This program is taken from the penultimate section of
 .B The C
 .BR Book ,
 and is a simplistic grep-like program.
+.TP
+.B write
+A simple program that writes the given arguments to a file or to
+.I stdout
+(default is
+.IR stdout ).
+The idea behind this program was to take some inspiration from 
+.B git
+about command line arguments and the use of bit operations to indicate set options.
+.TP
+.B progress
+A progress bar, shamelessly stolen from 
+.BR git ,
+because I think it's cool and wanted to see if I could get it to work outside 
+.BR git .
 .SH AUTHOR
 Thomas Bracht Laumann Jespersen <laumann.thomas@gmail.com>
 
@@ -70,5 +91,4 @@ Thomas Bracht Laumann Jespersen <laumann.thomas@gmail.com>
 from
 .B GBdirect
 (the book can be downloaded in PDF form from:
-.I http://publications.gbdirect.co.uk/c_book/
-)
+.IR http://publications.gbdirect.co.uk/c_book/ )

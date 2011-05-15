@@ -9,8 +9,8 @@ CFLAGS=-Wall
 TRIGRAPHER=trigrapher
 RM=@rm
 
-trigrapher:
-	$(CC) $(CFLAGS) -o $(TRIGRAPHER) $(TRIGRAPHER).c
+$(TRIGRAPHER): $(TRIGRAPHER).c
+	$(CC) $(CFLAGS) -o $@ $@.c
 
 clean:
 	$(RM) -rv $(TRIGRAPHER)
