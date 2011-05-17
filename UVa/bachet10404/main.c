@@ -9,11 +9,11 @@ main(int argc, char **argv)
 {
 	long n;		/* number of stones */
 	int m;		/* number of following arguments */
-	int i;
+	int i,j;
 
 	char 	buf[BUFSIZ];
 	int 	opts[BUFSIZ],
-		game[BUFSIZ];
+		*game;
 
 	while(fgets(buf, sizeof(buf), stdin)) {
 		printf("Input line: %s", buf);
@@ -25,10 +25,43 @@ main(int argc, char **argv)
 
 		get_numbers(buf, opts, m);
 
+		/* Printing business - to be removed */
 		printf("opts=[ ");
 		for (i=0 ; i<m ; i++)
 			printf("%d ", opts[i]);
 		printf("]\n");
+
+		/*
+		 * Algorithm: Initialise game to 0 (false) and set
+		 * the m start fields to true.
+		 * 
+		 * Then iterate game from 0..m-1 setting game[i] = 1
+		 *   <=>
+		 * game[opts[0]] && ... && game[opts[m-1]] = 0
+		 */
+
+		/* init */
+		game = (int*)calloc(n, sizeof(int));
+		for (i=0; i<m; i++)
+			game[opts[i]-1] = 1;
+
+		/*
+		 * At each cell, look at a[i-k] for k in opts. 
+		 */
+		for (i=0; i<n; i++) {
+			for (j=0; j<m; j++) {
+				if (game[i])	/* Already true, go on */
+					continue;
+				/* Continue if current position isn't far enough ahead */
+				if (i-(opts[j]-1) < 0)
+					continue;
+				/* TODO: Otherwise test */
+			}
+		}
+
+		printf("\n");
+		/* free */
+		free(game);
 	}
 
 	/*
@@ -46,14 +79,11 @@ get_numbers(char *input, int *opts, int m)
 	skip_ahead_until_space(&input);
 	input++;
 
-/*	fprintf(stderr, "input: %s", input); */
-
 	int i;
 	for (i=0; i<m; i++) {
 		sscanf(input, "%d", &opts[i]);
 		input++;
 		skip_ahead_until_space(&input);
-/*		fprintf(stderr, "  %d: %s", i, input);*/
 	}
 }
 
