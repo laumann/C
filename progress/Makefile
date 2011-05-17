@@ -1,43 +1,51 @@
-CC=gcc
-CFLAGS=-Wall
+#### Definitions ####
+# (using := means immediate binding)
+CC      := gcc
+CFLAGS  := -Wall -g
+RM      := rm -rfv
+MKDIR   := mkdir -v
 
-H_FILES=bswap.h git-compat-util.h progress.h
-C_FILES=progress.c use_progress.c
+BINDIR  := bin
+BIN     := $(BINDIR)/use_progress
 
-BIN=use_progress
-BINDIR=bin
+OBJDIR  := obj
+OBJECTS := $(addprefix $(OBJDIR)/,\
+		progress.o use_progress.o)
 
-.PHONY: help
+# Phony targets
+.PHONY: clean help run compile
+
+#### Target section ####
+compile: $(BIN)
+
 help:
 	@echo "This progress bar is taken directly from git -- because I like it, and it serves"
 	@echo "as a good exercise to see how some C code works. Run:"
 	@echo ""
-	@echo "  'make example'"
+	@echo "  'make run'"
 	@echo ""
 	@echo "or"
 	@echo ""
-	@echo "  'make run_example'"
+	@echo "  'make compile'  (default)"
 	@echo ""
 	@echo "to see an example program."
 
-.PHONY: example
-example: $(BINDIR)/$(BIN)
 
-.PHONY: run_example
-run_example: | example
-	$(BINDIR)/$(BIN)
+run: $(BIN)
+	$<
 
-MAIN=$(BINDIR)/$(BIN)
-$(MAIN): $(C_FILES) $(H_FILES) | $(BINDIR)
-	$(CC) $(CFLAGS) $(C_FILES) -o $@
+$(BIN): $(OBJECTS) | $(BINDIR)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
 
-$(BINDIR):
-	mkdir $(BINDIR)
+$(OBJDIR)/%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
-print: *.c
-	lpr -p $?
-	touch print
+$(OBJECTS): progress.h git-compat-util.h bswap.h | $(OBJDIR)
+$(OBJDIR) $(BINDIR): ; @$(MKDIR) $@
 
-.PHONY: clean
+# Dependencies - difficult to express in this form
+# progress.o: progress.h git-compat-util.h bswap.h
+# use_progress.o: progress.h
+
 clean:
-	@rm -rfv $(BINDIR)
+	@$(RM) $(OBJDIR) $(BINDIR)
