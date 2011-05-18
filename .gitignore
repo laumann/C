@@ -1,4 +1,5 @@
 *.swp
+*.[oa]
 binarytree
 cbook/array_traversal
 cbook/ex4_3
@@ -20,4 +21,6 @@ cbook/exp9_4
 cbook/silly
 cbook/use_sinecosine
 redblacktree/use_redblacktree
-progress/use_progress
+progress/bin/use_progress
+UVa/bachet10404/bachet
+UVa/verweggistan812/verweggistan
