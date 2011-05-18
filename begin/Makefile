@@ -3,11 +3,13 @@
 # 
 #
 
-CC=gcc
-CFLAGS=-Wall
-OBJECTS=hello2.o h.o w.o
-PROGRAMS=hello hello2 ager longstring bubble_array trigraph ex1_3 bit bit2 gitbit exp4_4 ex4_1 struct
-TARGETS=hello hello2 ager str ary_begin exercise1_3 trigraph bit bit2 gitbit example4_4 exercise4_1 struct
+CC	 := gcc
+CFLAGS	 := -Wall
+OBJECTS	 := hello2.o h.o w.o
+PROGRAMS := hello hello2 ager longstring bubble_array trigraph ex1_3 bit bit2\
+		gitbit exp4_4 ex4_1 struct
+TARGETS	 := hello hello2 ager str ary_begin exercise1_3 trigraph bit bit2\
+		gitbit example4_4 exercise4_1 struct
 
 # If the user didn't specify anything, they will get some help.
 #
