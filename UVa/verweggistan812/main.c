@@ -4,8 +4,7 @@
 int
 main(int argc, char **argv)
 {
-	/*
-	 * Input format:
+	/* Input format:
 	 * w
 	 * b n1 n2 .. nb (w lines of this format)
 	 * input ends on w=0
@@ -13,7 +12,6 @@ main(int argc, char **argv)
 	int w, b, i, j, D, *pile;
 
 	D = scanf("%d\n", &w);
-
 	for (;;) {
 		for (i=0; i<w; i++) {			/* Get w lines */
 			D = scanf("%d", &b);		/* lines start with b */

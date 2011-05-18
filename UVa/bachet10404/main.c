@@ -1,46 +1,34 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void get_numbers(char *, int *, int);
-void skip_ahead_until_space(char **);
-
 /**
  * Bachet's game algorithm (UVa problem 10404)
- * TODO: Rewrite to dynamically allocate opts (using calloc)
- *       and get rid of get_numbers
  */
-
 int
 main(int argc, char **argv)
 {
-	long n;		/* number of stones */
-	int m;		/* number of following arguments */
-	int i,j;	/* iteration variables */
+	long 	n;	/* number of stones */
+	int 	m;	/* number of following arguments */
+	int 	i,j,D;	/* iteration variables */
 
-	char 	buf[BUFSIZ];
-	int 	opts[BUFSIZ],
+	int 	*opts,
 		*game;
 
-	while(fgets(buf, sizeof(buf), stdin)) {
-		sscanf(buf, "%ld %d", &n, &m);
-
-		/* Get the options */
-		get_numbers(buf, opts, m);
-
-		/* init */
+	while (fscanf(stdin, "%ld %d", &n, &m) != EOF) {
+		/* Init */
 		game = (int*)calloc(n, sizeof(int));
-		for (i=0; i<m; i++)
+		opts = (int*)calloc(m, sizeof(int));
+		for (i=0; i<m; i++) {
+			D = fscanf(stdin, "%d", &opts[i]);
 			game[opts[i]-1] = 1;
-		/*
-		 * At each cell, look at a[i-k] for k in opts. 
-		 * game[i] = 1 <=> game[opts[0]] && ... && game[opts[m-1]] = 0
-		 */
+		}
+		/* Process */
 		for (i=0; i<n; i++) {
 			for (j=0; j<m; j++) {
 				if (game[i] || i-opts[j] < 0)	/* Already true, go on */
 					continue;
-				/* test */
-				if (!game[i-opts[j]]) {
+
+				if (!game[i-opts[j]]) {		/* test */
 					game[i] = 1;
 					break;
 				}
@@ -48,28 +36,7 @@ main(int argc, char **argv)
 		}
 		printf("%s\n", game[n-1] ? "Stan wins" : "Ollie wins");
 		free(game);
+		free(opts);
 	}
 	exit(0);
-}
-
-void
-get_numbers(char *input, int *opts, int m)
-{
-	skip_ahead_until_space(&input);
-	input++;
-	skip_ahead_until_space(&input);
-	input++;
-
-	int i;
-	for (i=0; i<m; i++) {
-		sscanf(input, "%d", &opts[i]);
-		input++;
-		skip_ahead_until_space(&input);
-	}
-}
-
-void skip_ahead_until_space(char **buf)
-{
-	while (**buf != ' ')
-		(*buf)++;
 }
