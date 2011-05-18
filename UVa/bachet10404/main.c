@@ -14,26 +14,25 @@ main(int argc, char **argv)
 	int 	*opts,
 		*game;
 
-	while (fscanf(stdin, "%ld %d", &n, &m) != EOF) {
-		/* Init */
+	while (fscanf(stdin, "%ld %d", &n, &m) != EOF) { 	/* Init */
 		game = (int*)calloc(n, sizeof(int));
 		opts = (int*)calloc(m, sizeof(int));
+
 		for (i=0; i<m; i++) {
 			D = fscanf(stdin, "%d", &opts[i]);
 			game[opts[i]-1] = 1;
 		}
-		/* Process */
-		for (i=0; i<n; i++) {
+
+		for (i=0; i<n; i++)				/* Process */
 			for (j=0; j<m; j++) {
 				if (game[i] || i-opts[j] < 0)	/* Already true, go on */
 					continue;
-
 				if (!game[i-opts[j]]) {		/* test */
 					game[i] = 1;
 					break;
 				}
 			}
-		}
+		
 		printf("%s\n", game[n-1] ? "Stan wins" : "Ollie wins");
 		free(game);
 		free(opts);
