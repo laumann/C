@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS := -Wall
+CFLAGS := -Wall -lm -lcrypt -O2 -pipe -ansi
 
 bachet: main.c
 	$(CC) $(CFLAGS) -o $@ $<
