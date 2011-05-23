@@ -4,6 +4,7 @@
 
 static struct rb_node *grandparent(struct rb_node*);
 static struct rb_node *new_node(int);
+static struct rb_node *tree_search(struct rb_node*, int);
 
 static void rb_insert_fixup(struct redblack_tree*, struct rb_node*);
 static void rb_delete_fixup(struct redblack_tree*, struct rb_node*);
@@ -31,30 +32,30 @@ new_tree(void)
 }
 
 static struct rb_node *
-new_node(int data)
+new_node(int key)
 {
 	struct rb_node *n = (struct rb_node*)malloc(sizeof(struct rb_node));
 	n->color	= RED;
-	n->data		= data;
-	n->left_child 	=
-	n->right_child 	=
+	n->key		= key;
+	n->left 	=
+	n->right 	=
 	n->parent	= NULL;
 	return n;
 }
 
 void
-tree_insert(struct redblack_tree *T, int data)
+tree_insert(struct redblack_tree *T, int key)
 {
-	struct rb_node 	*n = new_node(data),
+	struct rb_node 	*n = new_node(key),
 			*y = NULL,
 			*x = T->root;
 	
 	while (x) {
 		y = x;
-		if (n->data < x->data)
-			x = x->left_child;
+		if (n->key < x->key)
+			x = x->left;
 		else
-			x = x->right_child;
+			x = x->right;
 	}
 
 	n->parent = y;
@@ -62,10 +63,10 @@ tree_insert(struct redblack_tree *T, int data)
 	if (!y)
 		T->root = n;
 	else
-		if (n->data < y->data)
-			y->left_child = n;
+		if (n->key < y->key)
+			y->left = n;
 		else
-			y->right_child = n;
+			y->right = n;
 
 	T->size++;
 
@@ -77,15 +78,15 @@ rb_insert_fixup(struct redblack_tree *T, struct rb_node *z)
 {
 	struct rb_node *g, *y;
 	while ( z->parent && z->parent->color == RED && (g = grandparent(z))) {
-		if (z->parent == g->left_child) {
-			y = g->right_child;	/* Uncle */
+		if (z->parent == g->left) {
+			y = g->right;	/* Uncle */
 			if (y && y->color == RED) {
 				z->parent->color = y->color = BLACK;
 				g->color = RED;
 				z = g;
 			}
 			else {
-				if (z == z->parent->right_child) {
+				if (z == z->parent->right) {
 					z = z->parent;
 					rotate_left(T, z);
 				}
@@ -95,14 +96,14 @@ rb_insert_fixup(struct redblack_tree *T, struct rb_node *z)
 			}
 		}
 		else {	/* Same as first part with "right" and "left" exchanged */
-			y = g->left_child;
+			y = g->left;
 			if (y && y->color == RED) {
 				z->parent->color = y->color = BLACK;
 				g->color = RED;
 				z = g;
 			}
 			else { 
-				if (z == z->parent->left_child) {
+				if (z == z->parent->left) {
 					z = z->parent;
 					rotate_right(T, z);
 				}
@@ -115,10 +116,24 @@ rb_insert_fixup(struct redblack_tree *T, struct rb_node *z)
 	T->root->color = BLACK;
 }
 
+struct rb_node *
+find(struct redblack_tree *tree, int key)
+{
+	return tree_search(tree->root, key);
+}
+
+static struct rb_node *
+tree_search(struct rb_node *x, int key)
+{
+	for ( ; x && x->key != key; x = (key < x->key) ? x->left : x->right)
+		;
+	return x;
+}
+
 void
 in_order_traverse(struct redblack_tree *tree)
 {
-	printf("Root is '%d' (size: %d)\n", tree->root->data, tree->size);
+	printf("Root is '%d' (size: %d)\n", tree->root->key, tree->size);
 	traverse_i(tree->root);
 }
 
@@ -129,16 +144,16 @@ traverse_i(struct rb_node *n)
 	if (!n)
 		return;
 	depth++;
-	traverse_i(n->left_child);
-	printf("%d ", n->data);
-	traverse_i(n->right_child);
+	traverse_i(n->left);
+	printf("%d ", n->key);
+	traverse_i(n->right);
 	depth--;
 }
 
 void
 paran_view(struct redblack_tree *tree)
 {
-	printf(" root=%d ", tree->root->data);	
+	printf(" root=%d ", tree->root->key);	
 	paran_v(tree->root);
 }
 
@@ -148,9 +163,9 @@ paran_v(struct rb_node *n)
 	if (!n) 
 		return;
 	printf("(");
-	printf("%d", n->data);
-	paran_v(n->left_child);
-	paran_v(n->right_child);
+	printf("%d", n->key);
+	paran_v(n->left);
+	paran_v(n->right);
 	printf(")");
 }
 
@@ -166,19 +181,19 @@ a   b        b   c
 static void
 rotate_right(struct redblack_tree *t, struct rb_node *y)
 {
-	struct rb_node *x = y->left_child;
-	y->left_child = x->right_child;
-	if (x->right_child)
-		x->right_child->parent = y;
+	struct rb_node *x = y->left;
+	y->left = x->right;
+	if (x->right)
+		x->right->parent = y;
 	x->parent = y->parent;
 	if (!y->parent)
 		t->root = x;
 	else 
-		if (y == y->parent->left_child)
-			y->parent->left_child = x;
+		if (y == y->parent->left)
+			y->parent->left = x;
 		else 
-			y->parent->right_child = x;
-	x->right_child = y;
+			y->parent->right = x;
+	x->right = y;
 	y->parent = x;
 }
 
@@ -194,23 +209,23 @@ a   b        b   c
 static void
 rotate_left(struct redblack_tree *t, struct rb_node *x)
 {
-	struct rb_node *y = x->right_child;
-	x->right_child = y->left_child;
+	struct rb_node *y = x->right;
+	x->right = y->left;
 
-	if (y->left_child)
-		y->left_child->parent = x;
+	if (y->left)
+		y->left->parent = x;
 	
 	y->parent = x->parent;
 
 	if (!x->parent)
 		t->root = y;
 	else
-		if (x == x->parent->left_child)
-			x->parent->left_child = y;
+		if (x == x->parent->left)
+			x->parent->left = y;
 		else
-			x->parent->right_child = y;
+			x->parent->right = y;
 	
-	y->left_child = x;
+	y->left = x;
 	x->parent = y;
 }
 
@@ -223,23 +238,32 @@ grandparent(struct rb_node *n)
 		return NULL;
 }
 
+/*
+ * TODO: Case where z has two children does not work properly.
+ * Question: When y is set to successor(z), how come that y is returned?
+ *		Shouldn't it be z (or a copy of z) that's returned?
+ */
 struct rb_node *
 tree_delete(struct redblack_tree *T, struct rb_node *z)
 {
 	struct rb_node *y, *x;
-	fprintf(stderr, "Deleting %d\n", z->data);
+	fprintf(stderr, "Deleting %d\n", z->key);
 
-	if (z->left_child && z->right_child)
+	/* Three cases - no children, one child or two children */
+
+	if (z->left && z->right) 				{
+		fprintf(stderr, "Getting succ(%d) = ", z->key);
 		y = successor(z);
+		fprintf(stderr, "%d\n", y->key);			}
 	else
-		y = z;
+		y = z; /* z has one or no children */
 
 	print_null_or_not("y", y);
 
-	if (y->left_child)
-		x = y->left_child;
+	if (y->left)
+		x = y->left;
 	else
-		x = y->right_child;
+		x = y->right;
 
 	print_null_or_not("x", x);
 
@@ -249,19 +273,19 @@ tree_delete(struct redblack_tree *T, struct rb_node *z)
 	if (!y->parent)
 		T->root = x;
 	else
-		if (y == y->parent->left_child)
-			y->parent->left_child = x;
+		if (y == y->parent->left)
+			y->parent->left = x;
 		else
-			y->parent->right_child = x;
+			y->parent->right = x;
 	
 	if (y != z) { /* z has two children */
 		fprintf(stderr, "y != z\n");
-		z->data = y->data;
-		z->left_child = y->left_child;
-		z->right_child = y->right_child;
+		z->key = y->key;
+		z->left = y->left;
+		z->right = y->right;
 		z->parent = y->parent;
 	}
-		
+	
 	if (y->color == BLACK) {
 		fprintf(stderr, "\nFixing delete!\n");
 		rb_delete_fixup(T, x);
@@ -270,61 +294,64 @@ tree_delete(struct redblack_tree *T, struct rb_node *z)
 	return y;
 }
 
+/*
+ * TODO: Write code that tests this...
+ */
 static void
 rb_delete_fixup(struct redblack_tree *T, struct rb_node *x)
 {
 	struct rb_node *w;
 	while (x != T->root && x->color == BLACK) {
-		if (x == x->parent->left_child) {
-			w = x->parent->right_child;
+		if (x == x->parent->left) {
+			w = x->parent->right;
 			if (!w) break;
 			if (/*!!*/ w->color == RED) {
 				w->color = BLACK;
 				x->parent->color = RED;
 				rotate_left(T, x->parent);
-				w = x->parent->right_child;
+				w = x->parent->right;
 			}
-			if (/*!!*/ w->left_child && w->left_child->color == BLACK &&
-				w->right_child && w->right_child->color == BLACK)
+			if (/*!!*/ w->left && w->left->color == BLACK &&
+				w->right && w->right->color == BLACK)
 			{
 				w->color = RED;
 				x = x->parent;
 			}
-			else {	if (w->right_child && w->right_child->color == BLACK && w->left_child) {
-					w->left_child->color = RED;
+			else {	if (w->right && w->right->color == BLACK && w->left) {
+					w->left->color = RED;
 					rotate_right(T, w);
-					w = x->parent->right_child;
+					w = x->parent->right;
 				}
 				w->color = x->parent->color;
 				x->parent->color = BLACK;
-				if (w->right_child) w->right_child->color = BLACK;
+				if (w->right) w->right->color = BLACK;
 				rotate_left(T, x->parent);
 				x = T->root;
 			}
 		}
 		else {	/* Same as above, but "right" and "left" exchanged */
-			w = x->parent->left_child;
+			w = x->parent->left;
 			if (!w) break;
 			if (w->color == RED) {
 				w->color = BLACK;
 				x->parent->color = RED;
 				rotate_right(T, x->parent);
-				w = x->parent->left_child;
+				w = x->parent->left;
 			}
-			if (w->left_child && w->left_child->color == BLACK
-				&& w->right_child && w->right_child->color == BLACK)
+			if (w->left && w->left->color == BLACK
+				&& w->right && w->right->color == BLACK)
 			{
 				w->color = RED;
 				x = x->parent;
 			}
-			else {	if (w->left_child && w->left_child->color == BLACK && w->right_child) {
-					w->right_child->color = RED;
+			else {	if (w->left && w->left->color == BLACK && w->right) {
+					w->right->color = RED;
 					rotate_left(T, w);
-					w = x->parent->left_child;
+					w = x->parent->left;
 				}
 				w->color = x->parent->color;
 				x->parent->color = BLACK;
-				if (w->left_child) w->left_child->color = BLACK;
+				if (w->left) w->left->color = BLACK;
 				rotate_right(T, x->parent);
 				x = T->root;
 			}
@@ -356,10 +383,10 @@ call_if_root(struct redblack_tree* t, struct rb_node *(*f)(struct rb_node*))
 struct rb_node *
 successor(struct rb_node *x)
 {
-	if (x->right_child)
-		return min(x->right_child);
+	if (x->right)
+		return min(x->right);
 	struct rb_node *y = x->parent;
-	while (y && x == y->right_child) {
+	while (y && x == y->right) {
 		x = y;
 		y = y->parent;
 	}
@@ -369,10 +396,10 @@ successor(struct rb_node *x)
 struct rb_node *
 predecessor(struct rb_node *x)
 {
-	if (x->left_child)
-		return max(x->left_child);
+	if (x->left)
+		return max(x->left);
 	struct rb_node *y = x->parent;
-	while (y && x == y->left_child) {
+	while (y && x == y->left) {
 		x = y;
 		y = y->parent;
 	}
@@ -382,21 +409,24 @@ predecessor(struct rb_node *x)
 static struct rb_node *
 min(struct rb_node *x)
 {
-	while (x->left_child)
-		x = x->left_child;
+	while (x->left)
+		x = x->left;
 	return x;
 }
 
 static struct rb_node *
 max(struct rb_node *x)
 {
-	while (x->right_child)
-		x = x->right_child;
+	while (x->right)
+		x = x->right;
 	return x;
 }
 
 static void
 print_null_or_not(char *name, struct rb_node *obj)
 {
-	fprintf(stderr, "%s is %s\n", name, obj? "not null" : "null");
+	if (obj)
+		fprintf(stderr, "%s is %d\n", name, obj->key);
+	else
+		fprintf(stderr, "%s is null\n", name);
 }

@@ -52,22 +52,40 @@ main()
 	succ = successor(min);
 
 	printf("%d. Done.\nPredecessor of successor's successor: %d. Done.\n",
-		succ->data,
-		predecessor(successor(succ))->data);
+		succ->key,
+		predecessor(successor(succ))->key);
 
-	printf("Deleting node (%d). ", succ->data);
+	printf("Deleting node (%d). ", successor(succ)->key);
 
-	struct rb_node *del = tree_delete(tree, succ);
+	struct rb_node *del = tree_delete(tree, successor(succ));
 
-	printf("del->data = %d. ", del->data);
+	printf("del->key = %d. ", del->key);
 
-	printf("Done.\nNew successor of min: %d (min is %d). ", successor(tree_minimum(tree))->data, tree_minimum(tree)->data);
+	printf("Done.\nNew successor of min: %d (min is %d). ", successor(tree_minimum(tree))->key, tree_minimum(tree)->key);
 
 	printf("Done.\nTraversing... ");
 
 	in_order_traverse(tree);
 
+	printf(" Done. Looking for node with key = 25... ");
+
+	struct rb_node *twentyfive = find(tree, 25);
+
+	printf("%s", twentyfive? "found.\nDeleting..." : "not found.");
+/* TODO: Enable the following
+	if (twentyfive) {
+		del = tree_delete(tree, twentyfive);
+	}
+*/
+	printf("\n Done. Traversing... ");
+
+	in_order_traverse(tree);
+
 	printf(" Done.\nExiting.\n");
+	
+	in_order_traverse(tree);
+	
+	printf(" Done.\nExiting.\n");;
 
 	exit(0);
 }

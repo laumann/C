@@ -15,13 +15,15 @@ struct redblack_tree {
 
 struct rb_node {
 	short color;	/* 0=BLACK, 1=RED */
-	int data;
-	struct rb_node *left_child, *right_child, *parent;
+	int key;
+	void *elm;
+	struct rb_node *left, *right, *parent;
 };
 
 struct redblack_tree *new_tree();
 void tree_insert(struct redblack_tree*, int);
 struct rb_node *tree_delete(struct redblack_tree*, struct rb_node*);
+struct rb_node *find(struct redblack_tree*, int key);
 
 struct rb_node *tree_maximum(struct redblack_tree*);
 struct rb_node *tree_minimum(struct redblack_tree*);
