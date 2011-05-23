@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "heapsort.h"
 #include "heap.h"
 
 #define MAX		6
 #define ARRAYSIZE(x)	(sizeof(x)/sizeof(x[0]))
 
 void print_array(int[], int);
-void print_array(char **ary, int);
 
 int
 main()
@@ -31,8 +31,6 @@ main()
 	heapsort(fig6_3, sz);
 	print_array(fig6_3, sz);
 
-	char *ary = "foo bar braz";
-	
 	exit(0);
 }
 
@@ -43,22 +41,6 @@ print_array(int *ints, int sz)
 	for (; sz ; ints++, sz--)
 		printf("%d ", *ints);
 	printf("]\n");
-}
-
-void
-print_array(char **ary, int sz)
-{
-	printf("%s\n", *ary);	
-}
-
-void
-heapsort(int elms[], int sz)
-{
-	build_max_heap(elms, sz);
-	for (sz-- ; sz >= 1 ; sz--) {
-		int tmp	= *elms; *elms = *(elms+sz); *(elms+sz)	= tmp;
-		max_heapify(elms, 0, sz);
-	}
 }
 
 void

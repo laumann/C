@@ -1,63 +1,49 @@
 #include "redblacktree.h"
 
-#define LINDA_ALS	2550842
-
-static struct node *grandparent(struct node*);
-static struct node *uncle(struct node*);
-static void insert_case1(struct node*);
-static void insert_case2(struct node*);
-static void insert_case3(struct node*);
-static void insert_case4(struct node*);
-static void insert_case5(struct node*);
-static void rotate_right(struct node*);
-static void rotate_left(struct node*);
-static void traverse_i(struct node*);
-static void paran_v(struct node*);
+static struct rb_node *grandparent(struct rb_node*);
+static struct rb_node *uncle(struct rb_node*);
+static void insert_case1(struct rb_node*);
+static void insert_case2(struct rb_node*);
+static void insert_case3(struct rb_node*);
+static void insert_case4(struct rb_node*);
+static void insert_case5(struct rb_node*);
+static void rotate_right(struct rb_node*);
+static void rotate_left(struct rb_node*);
+static void traverse_i(struct rb_node*);
+static void paran_v(struct rb_node*);
 
 /* Our current tree */
-static struct tree **tree_p;
+static struct redblack_tree **redblack_tree_p;
 
-void
-new_tree(struct tree **t)
+struct redblack_tree *
+new_tree(void)
 {
-	*t = (struct tree*)malloc(sizeof(struct tree));
+	struct redblack_tree *t = (struct redblack_tree*)malloc(sizeof(struct redblack_tree));
 
-	/* Initialise mutex */
-	pthread_mutexattr_t attr;
-	pthread_mutexattr_init(&attr);
-	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-	pthread_mutex_init(&(*t)->mutex, &attr);
-	pthread_mutexattr_destroy(&attr);
+	t->size = 0;
+	t->root = NULL;
 
-	/* Initialise cond */
-	pthread_cond_init(&(*t)->cond, NULL);
-
-	(*t)->size = 0;
-	(*t)->root = NULL;
+	return t;
 }
 
 void
-tree_insert(struct tree *tree, int data)
+tree_insert(struct redblack_tree *tree, int data)
 {
-	struct node *n,	*p;
-	tree_p = &tree;
+	struct rb_node *n, *p;
+	redblack_tree_p = &tree;
 
-	n = (struct node*)malloc(sizeof(struct node));
+	n = (struct rb_node*)malloc(sizeof(struct rb_node));
 	n->color 	= RED;
 	n->data 	= data;
 	n->left_child 	= NULL;
 	n->right_child 	= NULL;
 	n->parent	= NULL;
 
-	pthread_mutex_lock(&(*tree_p)->mutex);
+	(*redblack_tree_p)->size++;
 
-	(*tree_p)->size++;
-
-	if (!((*tree_p)->root)) {
-		(*tree_p)->root = n;
+	if (!((*redblack_tree_p)->root)) {
+		(*redblack_tree_p)->root = n;
 		insert_case1(n);
-		pthread_cond_signal(&(*tree_p)->cond);
-		pthread_mutex_unlock(&(*tree_p)->mutex);
 		return;
 	}
 
@@ -68,7 +54,6 @@ tree_insert(struct tree *tree, int data)
 				p->left_child = n;
 				n->parent = p;
 				insert_case1(n);
-				printf("\n");
 				break;
 			}
 			p = p->left_child;
@@ -78,46 +63,42 @@ tree_insert(struct tree *tree, int data)
 				p->right_child = n;
 				n->parent = p;
 				insert_case1(n);
-				printf("\n");
 				break;
 			}
 			p = p->right_child;
 		}
 	}
-	pthread_cond_signal(&(*tree_p)->cond);
-	pthread_mutex_unlock(&(*tree_p)->mutex);
 } 
 
 void
-in_order_traverse(struct tree *tree)
+in_order_traverse(struct redblack_tree *tree)
 {
 	printf("Root is '%d' (size: %d)\n", tree->root->data, tree->size);
 	traverse_i(tree->root);
 }
 
 static void
-traverse_i(struct node *n)
+traverse_i(struct rb_node *n)
 {
 	static int depth = 0;
 	if (!n)
 		return;
 	depth++;
 	traverse_i(n->left_child);
-/*	printf("[%*d%*c]\n", depth, n->data, depth, '\0');*/
 	printf("%d ", n->data);
 	traverse_i(n->right_child);
 	depth--;
 }
 
 void
-paran_view(struct tree *tree)
+paran_view(struct redblack_tree *tree)
 {
 	printf(" root=%d ", tree->root->data);	
 	paran_v(tree->root);
 }
 
 static void
-paran_v(struct node *n)
+paran_v(struct rb_node *n)
 {
 	if (!n) 
 		return;
@@ -129,7 +110,7 @@ paran_v(struct node *n)
 }
 
 static void
-insert_case1(struct node *n)
+insert_case1(struct rb_node *n)
 {
 	if (!n->parent)
 		n->color = BLACK;
@@ -138,7 +119,7 @@ insert_case1(struct node *n)
 }
 
 static void
-insert_case2(struct node *n)
+insert_case2(struct rb_node *n)
 {
 	if (n->parent->color == BLACK)
 		return;
@@ -147,9 +128,9 @@ insert_case2(struct node *n)
 }
 
 static void
-insert_case3(struct node *n)
+insert_case3(struct rb_node *n)
 {
-	struct node *u, *g;
+	struct rb_node *u, *g;
 
 	u = uncle(n);
 
@@ -166,9 +147,9 @@ insert_case3(struct node *n)
 }
 
 static void
-insert_case4(struct node *n)
+insert_case4(struct rb_node *n)
 {
-	struct node *g;
+	struct rb_node *g;
 
 	g = grandparent(n);
 
@@ -184,9 +165,9 @@ insert_case4(struct node *n)
 }
 
 static void
-insert_case5(struct node *n)
+insert_case5(struct rb_node *n)
 {
-	struct node *g;
+	struct rb_node *g;
 
 	g = grandparent(n);
 	
@@ -201,78 +182,67 @@ insert_case5(struct node *n)
 
 /*
     |        |
-    Q        P
+    y        x
    / \      / \
-  P   c => a   Q
+  x   c => a   y
  / \          / \
 a   b        b   c
 
  */
 static void
-rotate_right(struct node *Q)
+rotate_right(struct rb_node *y)
 {
-	printf("rr ");
-	/* The given node (Q) becomes the right child of its left child (P) */
-	struct node
-		*P =  Q->left_child,
-		*b = (Q->left_child) ? Q->left_child->right_child : NULL;
-
-	/* Inform parent of Q of new child - or set new tree root */
-	if (Q->parent) {
-		if (Q == Q->parent->left_child)
-			Q->parent->left_child = P;
+	struct rb_node *x = y->left_child;
+	y->left_child = x->right_child;
+	if (x->right_child)
+		x->right_child->parent = y;
+	x->parent = y->parent;
+	if (!y->parent)
+		(*redblack_tree_p)->root = x;
+	else
+		if (y == y->parent->left_child)
+			y->parent->left_child = x;
 		else
-			Q->parent->right_child = P;
-	}
- 	else {
-		(*tree_p)->root = P;
-	}
-
-	P->parent = Q->parent;
-	P->right_child = Q;
-
-	Q->parent = P;
-	Q->left_child = b;
+			y->parent->right_child = x;
+	x->right_child = y;
+	y->parent = x;
 }
 
 /*
     |        |
-    Q        P
+    y        x
    / \      / \
-  P   c <= a   Q
+  x   c <= a   y
  / \          / \
 a   b        b   c
 
  */
 static void
-rotate_left(struct node *P)
+rotate_left(struct rb_node *x)
 {
-	printf("rl ");
-	struct node
-		*Q =  P->right_child,
-		*b = (P->right_child) ? P->right_child->left_child : NULL;
 
-	if (P->parent) {
-		/* Inform the parent of P that
-		   it has a new left or right child */
-		if (P == P->parent->left_child)
-			P->parent->left_child = Q;
+	struct rb_node *y = x->right_child;
+	x->right_child = y->left_child;
+
+	if (y->left_child)
+		y->left_child->parent = x;
+	
+	y->parent = x->parent;
+
+	if (!x->parent)
+		(*redblack_tree_p)->root = y;
+	else
+		if (x == x->parent->left_child)
+			x->parent->left_child = y;
 		else
-			P->parent->right_child = Q;
-	}
-	else { /* P was root */
-		(*tree_p)->root = Q;
-	}
-
-	Q->parent = P->parent;
-	Q->left_child = P;
-
-	P->parent = Q;
-	P->right_child = b;
+			x->parent->right_child = y;
+	
+	y->left_child = x;
+	x->parent = y;
 }
 
-static struct node *
-grandparent(struct node *n)
+static struct rb_node *
+grandparent(struct rb_node *n)
 {
 	if (n && n->parent)
 		return n->parent->parent;
@@ -280,10 +250,10 @@ grandparent(struct node *n)
 		return NULL;
 }
 
-static struct node *
-uncle(struct node *n)
+static struct rb_node *
+uncle(struct rb_node *n)
 {
-	struct node *g = grandparent(n);
+	struct rb_node *g = grandparent(n);
 	if (!g)
 		return NULL;
 	if (n->parent == g->left_child)

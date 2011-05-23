@@ -1,6 +1,6 @@
 
 CC=gcc
-CFLAGS=-Wall -lpthread
+CFLAGS=-Wall
 C_SRC=use_redblacktree.c redblacktree.c
 C_HDRS=redblacktree.h
 

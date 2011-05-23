@@ -4,11 +4,11 @@ int
 main()
 {
 	printf("Constructing new tree... ");
-	struct tree *tree;
+	struct redblack_tree *tree;
 	int i;
 
-	new_tree(&tree);
-     
+	tree = new_tree();
+
 	printf("Done.\nInserting nodes... ");
 	/* 4 2 6 3 1 5 7 */
 	
