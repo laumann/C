@@ -1,12 +1,7 @@
 #include "redblacktree.h"
 
 static struct rb_node *grandparent(struct rb_node*);
-static struct rb_node *uncle(struct rb_node*);
-static void insert_case1(struct rb_node*);
-static void insert_case2(struct rb_node*);
-static void insert_case3(struct rb_node*);
-static void insert_case4(struct rb_node*);
-static void insert_case5(struct rb_node*);
+static void rb_insert_fixup(struct rb_node*);
 static void rotate_right(struct rb_node*);
 static void rotate_left(struct rb_node*);
 static void traverse_i(struct rb_node*);
@@ -19,56 +14,97 @@ struct redblack_tree *
 new_tree(void)
 {
 	struct redblack_tree *t = (struct redblack_tree*)malloc(sizeof(struct redblack_tree));
-
 	t->size = 0;
 	t->root = NULL;
-
 	return t;
+}
+
+struct rb_node *
+new_node(int data)
+{
+	struct rb_node *n = (struct rb_node*)malloc(sizeof(struct rb_node));
+/*	n = { RED, data, NULL, NULL, NULL }; */
+	n->color	= RED;
+	n->data		= data;
+	n->left_child 	=
+	n->right_child 	=
+	n->parent	= NULL;
+	return n;
 }
 
 void
 tree_insert(struct redblack_tree *tree, int data)
 {
-	struct rb_node *n, *p;
+	struct rb_node 	*n = new_node(data),
+			*y = NULL,
+			*x = tree->root;
+	
 	redblack_tree_p = &tree;
 
-	n = (struct rb_node*)malloc(sizeof(struct rb_node));
-	n->color 	= RED;
-	n->data 	= data;
-	n->left_child 	= NULL;
-	n->right_child 	= NULL;
-	n->parent	= NULL;
+	while (x) {
+		y = x;
+		if (n->data < x->data)
+			x = x->left_child;
+		else
+			x = x->right_child;
+	}
+	n->parent = y;
+
+	if (!y)
+		(*redblack_tree_p)->root = n;
+	else
+		if (n->data < y->data)
+			y->left_child = n;
+		else
+			y->right_child = n;
 
 	(*redblack_tree_p)->size++;
 
-	if (!((*redblack_tree_p)->root)) {
-		(*redblack_tree_p)->root = n;
-		insert_case1(n);
-		return;
-	}
+	rb_insert_fixup(n);
+}
 
-	p = tree->root;
-	for (;;) {
-		if (n->data < p->data) {
-			if (!(p->left_child)) {
-				p->left_child = n;
-				n->parent = p;
-				insert_case1(n);
-				break;
+void
+rb_insert_fixup(struct rb_node *z)
+{
+	struct rb_node *g, *y;
+	while ( z->parent && z->parent->color == RED && (g = grandparent(z)) ) {
+		if (z->parent == g->left_child) {
+			y = g->right_child;	/* Uncle */
+			if (y && y->color == RED) {
+				z->parent->color = y->color = BLACK;
+				g->color = RED;
+				z = g;
 			}
-			p = p->left_child;
+			else {
+				if (z == z->parent->right_child) {
+					z = z->parent;
+					rotate_left(z);
+				}
+				z->parent->color = BLACK;
+				g->color = RED;
+				rotate_right(g);
+			}
 		}
-		else {
-			if (!(p->right_child)) {
-				p->right_child = n;
-				n->parent = p;
-				insert_case1(n);
-				break;
+		else {	/* Same as first part with "right" and "left" exchanged */
+			y = g->left_child;
+			if (y && y->color == RED) {
+				z->parent->color = y->color = BLACK;
+				g->color = RED;
+				z = g;
 			}
-			p = p->right_child;
+			else { 
+				if (z == z->parent->left_child) {
+					z = z->parent;
+					rotate_right(z);
+				}
+				z->parent->color = BLACK;
+				g->color = RED;
+				rotate_left(g);
+			}
 		}
 	}
-} 
+	(*redblack_tree_p)->root->color = BLACK;
+}
 
 void
 in_order_traverse(struct redblack_tree *tree)
@@ -109,77 +145,6 @@ paran_v(struct rb_node *n)
 	printf(")");
 }
 
-static void
-insert_case1(struct rb_node *n)
-{
-	if (!n->parent)
-		n->color = BLACK;
-	else
-		insert_case2(n);
-}
-
-static void
-insert_case2(struct rb_node *n)
-{
-	if (n->parent->color == BLACK)
-		return;
-	else
-		insert_case3(n);
-}
-
-static void
-insert_case3(struct rb_node *n)
-{
-	struct rb_node *u, *g;
-
-	u = uncle(n);
-
-	if (u && (u->color == RED)) {
-		n->parent->color = BLACK;
-		u->color = BLACK;
-		g = grandparent(n);
-		g->color = RED;
-		insert_case1(g);
-		return;
-	}
-	else 
-		insert_case4(n);
-}
-
-static void
-insert_case4(struct rb_node *n)
-{
-	struct rb_node *g;
-
-	g = grandparent(n);
-
-	if ((n == n->parent->right_child) && (n->parent == g->left_child)) {
-		rotate_left(n->parent);
-		n = n->left_child;
-	}
-	else if ((n == n->parent->left_child) && (n->parent == g->right_child)) {
-		rotate_right(n->parent);
-		n = n->right_child;
-	}
-	insert_case5(n);
-}
-
-static void
-insert_case5(struct rb_node *n)
-{
-	struct rb_node *g;
-
-	g = grandparent(n);
-	
-	n->parent->color = BLACK;
-	g->color = RED;
-	
-	if ((n == n->parent->left_child) && (n->parent == g->left_child))
-		rotate_right(g);
-	else
-		rotate_left(g);
-}
-
 /*
     |        |
     y        x
@@ -194,16 +159,11 @@ rotate_right(struct rb_node *y)
 {
 	struct rb_node *x = y->left_child;
 	y->left_child = x->right_child;
-	if (x->right_child)
-		x->right_child->parent = y;
+	if (x->right_child) x->right_child->parent = y;
 	x->parent = y->parent;
-	if (!y->parent)
-		(*redblack_tree_p)->root = x;
-	else
-		if (y == y->parent->left_child)
-			y->parent->left_child = x;
-		else
-			y->parent->right_child = x;
+	if (!y->parent)	(*redblack_tree_p)->root = x;
+	else 	if (y == y->parent->left_child) y->parent->left_child = x;
+		else y->parent->right_child = x;
 	x->right_child = y;
 	y->parent = x;
 }
@@ -248,16 +208,4 @@ grandparent(struct rb_node *n)
 		return n->parent->parent;
 	else
 		return NULL;
-}
-
-static struct rb_node *
-uncle(struct rb_node *n)
-{
-	struct rb_node *g = grandparent(n);
-	if (!g)
-		return NULL;
-	if (n->parent == g->left_child)
-		return g->right_child;
-	else
-		return g->left_child;
 }
