@@ -21,6 +21,13 @@ struct rb_node {
 
 struct redblack_tree *new_tree();
 void tree_insert(struct redblack_tree*, int);
+struct rb_node *tree_delete(struct redblack_tree*, struct rb_node*);
+
+struct rb_node *tree_maximum(struct redblack_tree*);
+struct rb_node *tree_minimum(struct redblack_tree*);
+struct rb_node *successor(struct rb_node*);
+struct rb_node *predecessor(struct rb_node*);
+
 void in_order_traverse(struct redblack_tree*);
 void paran_view(struct redblack_tree*);
 
