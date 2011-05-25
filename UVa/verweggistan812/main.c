@@ -32,24 +32,11 @@
  *
  *	print totalMax and SORTED numbers in hash (all or the 10 first)
  *
- * TODO: Make sure an example like this:
- *	2
- *	2 10 9
- *	5 10 10 10 10 10
- *
- *	Gives:
- *
- *	Workyards 2
- *	Maximum profit is 1.
- *	Number of pruls to buy: 2 3 4 5 6 7
- *
- *	In other words - if max == 0 it is ALSO part of the solution
  */
 
 /* Use struct in which you can ALSO record the size... */
 struct list {
-	int size;
-	int *array;
+	int size, *array;
 };
 
 int cmp(const void *a, const void *b)
@@ -60,14 +47,10 @@ int cmp(const void *a, const void *b)
 int
 main(int argc, char **argv)
 {
-	/* Input format:
-	 * w
-	 * b n1 n2 .. nb (w lines of this format)
-	 * input ends on w=0
-	 */
-	int w, b, h, i, j, k, _,
+	int 	w, b, h, i, j, k, _,
 		*pile,
 		totalMax, max, maxCount;
+	
 	struct list *res;
 
 	_ = scanf("%d\n", &w);
@@ -85,11 +68,9 @@ main(int argc, char **argv)
 				_ = scanf(" %d", pile+j);
 				*(pile+j) = 10 - *(pile+j);
 			}
-/* TODO Remove: */	printf("[ %d ", *pile);
 			max = maxCount = 0;
 			for (j=1; j<=b; j++) {
 				*(pile+j) = *(pile+j-1) + *(pile+j);
-/* TODO Remove: */		printf("%d ", *(pile+j));
 				if (max < *(pile+j)) {	/* New max found - set */
 					max = *(pile+j);
 					maxCount = 1;
@@ -97,35 +78,30 @@ main(int argc, char **argv)
 				else if (max == *(pile+j))
 					maxCount++;
 			}
-/* TODO Remove: */	printf("] (max=%d, maxCount=%d)\n", max, maxCount);
 
-			/* Questions: Is there anything to add? And: Is there anything to be added to? */
-			if (res->size) { /* Merge two lists */
-				
-				int 	*newArray = (int*)calloc(res->size*maxCount+2, sizeof(int)),
-					newSize = 0;
+			if (res->size) { /* Merge two lists */	
+				int *newArray = (int*)calloc(res->size*maxCount+2, sizeof(int));
 
 				/* Step thru matches */
-				for (k=j=0; k<=b; k++)	/* k is position in pile */
+				for (k=j=0; k<=b; k++)	/* k is position in pile, j is new size */
 					if (*(pile+k) == max) {
 						/* Step through res->array */
 						for (h=0; h<res->size; h++) {
-							int a = k + *(res->array+h); /* New candidate */
-/* TODO Remove: */					printf("Candidate: %d+%d=%d\n", k, *(res->array+h), a);
-							int s, add = 1;
-							for (s=0; s<newSize; s++) {
+							int 	a	= k + *(res->array+h),	/* New candidate */
+								s	= 0,
+								add 	= 1;
+							for ( ; s<j; s++)
 								if (*(newArray+s) == a) {	/* Already in set */
 									add = 0;
 									break;
 								}
-							}
 							if (add)
-								*(newArray + newSize++) = a;
+								*(newArray + j++) = a;
 						}
 					}
 				free(res->array);
 				res->array = newArray;
-				res->size = newSize;	
+				res->size = j;
 			}
 			else if (maxCount) { /* Anything to add (to empty list?) */
 				int *newArray = (int*)calloc(maxCount+2, sizeof(int));
@@ -135,21 +111,13 @@ main(int argc, char **argv)
 				res->size = j;
 				res->array = newArray;
 			}
-
-/* TODO Remove: */	printf("{ ");
-			for (j=0; j < res->size; j++)
-				printf("%d ", res->array[j]);
-			printf("}\n");
-
 			totalMax += max;
 		}
 		printf("Workyards %d\n", w);
-
 		printf("Maximum profit is %d.\n", totalMax);
 		printf("Number of pruls to buy:");
 		
-		/* TODO sort res and print all OR 10 smallest solutions */
-
+		/* Sort res and print all OR 10 smallest solutions */
 		if (res->size > 1)
 			qsort(res->array, res->size, sizeof(int), &cmp);
 		
