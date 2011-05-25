@@ -79,26 +79,25 @@ main(int argc, char **argv)
 					maxCount++;
 			}
 
-			if (res->size) { /* Merge two lists */	
+/*			printf("max: %d, maxCount: %d, res->size: %d.\n", max, maxCount, res->size);*/
+			if (res->size && maxCount) { /* Merge two lists */
 				int *newArray = (int*)calloc(res->size*maxCount+2, sizeof(int));
 
-				/* Step thru matches */
-				for (k=j=0; k<=b; k++)	/* k is position in pile, j is new size */
-					if (*(pile+k) == max) {
-						/* Step through res->array */
-						for (h=0; h<res->size; h++) {
-							int 	a	= k + *(res->array+h),	/* New candidate */
-								s	= 0,
-								add 	= 1;
+				for (h=j=0; h<res->size; h++) {
+					for (k=0; k<=b; k++)
+						if (pile[k] == max) {
+							int 	candidate = res->array[h] + k,
+								s = 0,
+								add = 1;
 							for ( ; s<j; s++)
-								if (*(newArray+s) == a) {	/* Already in set */
+								if (newArray[s] == candidate) {
 									add = 0;
 									break;
 								}
-							if (add)
-								*(newArray + j++) = a;
+							if (add)	/* Accepted? */
+								newArray[j++] = candidate;
 						}
-					}
+				}
 				free(res->array);
 				res->array = newArray;
 				res->size = j;
@@ -110,6 +109,10 @@ main(int argc, char **argv)
 						*(newArray+ j++) = k;
 				res->size = j;
 				res->array = newArray;
+			}
+			else if (!max && !maxCount && !res->size) { /* Zero should be in the set... */
+				res->array = (int*)calloc(2,sizeof(int));
+				res->size = 1;
 			}
 			totalMax += max;
 		}
