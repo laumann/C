@@ -46,6 +46,18 @@
  *	In other words - if max == 0 it is ALSO part of the solution
  */
 
+int cmp(const void *a, const void *b) {
+	return (int*)a-(int*)b;
+}
+
+/* Assumes proper \0 termination */
+int ary_sz(int *ary) {
+	int *ip = ary, sz=0;
+	for ( ; *ip; ip++, sz++)
+		;
+	return sz;
+}
+
 int
 main(int argc, char **argv)
 {
@@ -61,7 +73,7 @@ main(int argc, char **argv)
 
 	_ = scanf("%d\n", &w);
 	for (;;) {
-		totalMax = maxCount = 0;
+		totalMax = 0;
 		res = NULL;
 		for (i=0; i<w; i++) {			/* Get w lines */
 			_ = scanf("%d", &b);		/* lines start with b */
@@ -72,7 +84,11 @@ main(int argc, char **argv)
 				*(pile+j) = 10 - *(pile+j);
 			}
 /* TODO Remove: */	printf("[ %d ", *pile);
-			max = 0;
+			max = maxCount = 0;
+			if (max < *pile) {
+				max = *pile;
+				maxCount = 1;
+			}
 			for (j=1; j<b; j++) {
 				*(pile+j) = *(pile+j-1) + *(pile+j);
 /* TODO Remove: */		printf("%d ", *(pile+j));
@@ -87,11 +103,10 @@ main(int argc, char **argv)
 
 			/* Merge two lists... */
 			if (res) {	/* merge into res */
-				if (max <= 0)
+				if (max <= 0 && maxCount == 0)
 					goto L;
-				int sz=0, *newRes;
-				for (ip=res; *ip; ip++, sz++)
-					;
+				int 	sz = ary_sz(res),
+					*newRes;
 				if (!sz) {
 					printf("Init res (again)... ");
 					res = (int*)calloc(maxCount+1, sizeof(int));
@@ -101,20 +116,26 @@ main(int argc, char **argv)
 					goto L;
 
 				}
-				printf("sizeof(res) = %d\n", sz);
 				newRes = (int*)calloc(sz*maxCount+1, sizeof(int));
 				
+				/* TODO fix some copy bug */
+
+				int *newRes_p;
+				/* Special case max == 0 && maxCount > 0 => add all in res to newRes */
+				if (max == 0 && maxCount > 0)
+					for (ip=res, newRes_p = newRes; *ip; ip++)
+						*newRes_p++ = *ip;
+
 				/* Step thru matches */
 				for (k=j=0; k<b; k++)
 					if (*(pile+k) == max) {
 						for (ip=res; *ip; ip++) {	/* step thru res */
-							_ = *ip+k+1;
-							int *newRes_p = newRes;
-							for ( ; *newRes_p; newRes_p++)
-								if (*newRes_p == _)
-									_ = 0;
-							if (_)
-								*newRes_p = _;
+							int a = *ip+k+1;
+							for (newRes_p = newRes ; *newRes_p; newRes_p++)
+								if (*newRes_p == a)
+									a = 0;
+							if (a)
+								*newRes_p = a;
 							/* Add *ip+*(pile+k)+1 to newRes
 								<=> *ip+*(pile+k)+1 NOT in newRes */
 						}
@@ -144,11 +165,19 @@ main(int argc, char **argv)
 		printf("Number of pruls to buy: ");
 		
 		/* TODO sort res and print all OR 10 smallest solutions */
-		for (ip=res; *ip; ip++, printf(" "))
+		int sz=ary_sz(res);
+		if (sz > 1)
+			qsort(res, sz, sizeof(int), &cmp);
+
+		for (ip=res, sz=0; *ip && sz<10; ip++, sz++) {
 			printf("%d", *ip);
+			if (*(ip+1))
+				printf(" ");
+		}
 		printf("\n");
 
 		free(pile);
+		free(res);
 		_ = scanf("%d\n", &w);
 
 		/* Display a blank line between test cases. */
@@ -157,15 +186,3 @@ main(int argc, char **argv)
 	}
 	exit(0);
 }
-/*
-static void
-init_res(int **res, int b, int max, int sz, int *pile)
-{
-	int k,j;
-	printf("Init res... ");
-	free(res);
-	*res = (int*)calloc(sz+1, sizeof(int));
-	for (k=j=0; k<b; k++)
-		if (*(pile+k) == max)
-			*(*res+j++) = k+1;
-}*/
