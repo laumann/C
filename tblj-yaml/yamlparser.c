@@ -10,6 +10,7 @@
  */
 
 #include "yamlparser.h"
+#include <stdarg.h>
 
 /* Our working file */
 static FILE	*yaml_stream;
@@ -30,8 +31,7 @@ static int	isword(const char*);
 static int	prefixcmp(const char*, const char*);
 
 /* Error functions */
-static void	error(const char*);
-static void	error_got_c(char *, int);
+static void	error(const char*, ...);
 static void	error_premature_eof(void);
 
 /* Globally used variables */
@@ -56,7 +56,7 @@ parse_yaml_stream(FILE *stream)
 	while ((c = fgetc(yaml_stream)) != EOF) {
 		switch (c) {
 
-		case '%':	/* [20] c-directive ::= "%" */
+		case '%': /* [20] c-directive ::= "%" */
 			printf("DIRECTIVE ");
 			l_directive(yaml_stream);
 			break;
@@ -93,7 +93,6 @@ static void l_directive(FILE *s)
 		; /* What else? */
 
 	/* After parsing, should match newline... */
-/*	fscanf(s, "\n", d);*/
 }
 
 /*
@@ -113,7 +112,7 @@ static void l_comment(FILE *s)
 			; /* Eat comment */
 	}
 	else
-		error_got_c("Error in comment, unmatched character", c);
+		error("Error in comment, unmatched character: %c", (char)c);
 
 	/* b-comment ::= b-break | EOF */
 }
@@ -143,10 +142,10 @@ static void ns_yaml_directive(FILE *s)
 		fscanf(s, "%d", &yaml_version.major);
 	}
 	else
-		error_got_c("Error (ns-yaml-directive), expected digit, got %c\n", c);
+		error("(ns-yaml-directive), expected digit, got %c\n", (char)c);
 
 	if ( (c = fgetc(s)) != '.')
-		error_got_c("Error (ns-yaml-directive), expected '.', got %c\n", c);
+		error("(ns-yaml-directive), expected '.', got %c\n", (char)c);
 	
 	/* minor version*/
 	c = fgetc(s);
@@ -155,7 +154,7 @@ static void ns_yaml_directive(FILE *s)
 		fscanf(s, "%d", &yaml_version.minor);
 	}
 	else
-		error_got_c("Error (ns-yaml-directive), expected digit, got %c.\n", c);
+		error("(ns-yaml-directive), expected digit, got %c.\n", (char)c);
 
 	/* Checking */
 	if (YAML_DIRECTIVE_SPECIFIED)
@@ -173,10 +172,8 @@ static void ns_yaml_directive(FILE *s)
 			/* 1.2 - what? */
 			;
 	}
-	else if (yaml_version.major > 1) {
-		fprintf(stderr, "ERROR:\nYAML major version > 1 (%d.%d)\n", yaml_version.major, yaml_version.minor);
-		error("YAML major version set higher than 1.\n");
-	}
+	else if (yaml_version.major > 1)
+		error("YAML major version > 1 (%d.%d)\n", yaml_version.major, yaml_version.minor);
 
 	/* Set globally that YAML directive has already been given */
 	YAML_DIRECTIVE_SPECIFIED = 1;
@@ -184,6 +181,7 @@ static void ns_yaml_directive(FILE *s)
 
 static char *ns_char_plus(FILE *s)
 {
+	/* TODO: think, this probably doesn't work */
 	char **str;
 	int c = fgetc(s);
 
@@ -226,7 +224,7 @@ static void ns_tag_directive(FILE *s)
 		/* if tag =~ /!\w*!/ */
 	}
 	else
-		error_got_c("Expected '!' - got %c", *tag);
+		error("Expected '!' - got %c", *tag);
 
 	s_separate_in_line(s);
 
@@ -246,9 +244,8 @@ static void c_named_tag_handle(char *tag)
 	else
 		*(tag+len-1) = '\0';
 
-	if (!isword(tag)) {
-		fprintf(stderr, "ERROR:\nTag named '%s' contains non-word characters\n", tag);
-	}
+	if (!isword(tag)) 
+		error("Tag named '%s' contains non-word characters\n", tag);
 
 }
 
@@ -267,9 +264,15 @@ static int isword(const char *word)
 	return 1;	
 }
 
-static void error(const char *msg)
+/*
+
+ */
+static void error(const char *msg, ...)
 {
-	fprintf(stderr, "ERROR:\n%s", msg);
+	va_list ap;
+	va_start(ap, msg);
+	fprintf(stderr, "ERROR:\n");
+	vfprintf(stderr, msg, ap);
 	exit(1);
 }
 
@@ -297,7 +300,7 @@ static void s_separate_in_line(FILE *s)
 /*		fprintf(stderr, "Skipped %d blank%s.\n", count, (count == 1) ? "" : "s" );*/
 	}
 	else
-		error_got_c("Error (s-separate-in-line), expected white space character, got %c", c);
+		error("(s-separate-in-line), expected white space character - got %c", (char)c);
 }
 
 /*
