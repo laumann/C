@@ -46,10 +46,7 @@ parse_yaml_stream(FILE *stream)
 {
 	yaml_stream = stream;
 
-	YAML_DIRECTIVE_SPECIFIED = 0;
-	yaml_version.major = 1;
-	yaml_version.minor = 2;
-
+	reset();
 
 	/* GIANT opening switch */
 	int c;
@@ -330,4 +327,13 @@ parse_yaml_document(char *f)
 	
 	if (!yaml_stream)
 		fprintf(stderr, "Unable to open document: %s\n", f);
+}
+
+/* Reset the global variables */
+void
+reset()
+{	
+	YAML_DIRECTIVE_SPECIFIED= 0;
+	yaml_version.major 	= 1;
+	yaml_version.minor 	= 2;
 }
