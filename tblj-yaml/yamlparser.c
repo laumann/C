@@ -29,6 +29,7 @@ static void	c_named_tag_handle(char *);
 static int	isbreak(int c);
 static int	isword(const char*);
 static int	prefixcmp(const char*, const char*);
+static void	reset();
 
 /* Error functions */
 static void	error(const char*, ...);
@@ -262,7 +263,7 @@ static int isword(const char *word)
 }
 
 /*
-
+ * Display formatted error message and exit.
  */
 static void error(const char *msg, ...)
 {
@@ -270,13 +271,6 @@ static void error(const char *msg, ...)
 	va_start(ap, msg);
 	fprintf(stderr, "ERROR:\n");
 	vfprintf(stderr, msg, ap);
-	exit(1);
-}
-
-/* Display error message and exit */
-static void error_got_c(char *msg, int c)
-{
-	fprintf(stderr, msg, c);
 	exit(1);
 }
 
@@ -330,7 +324,7 @@ parse_yaml_document(char *f)
 }
 
 /* Reset the global variables */
-void
+static void
 reset()
 {	
 	YAML_DIRECTIVE_SPECIFIED= 0;
