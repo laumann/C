@@ -1,0 +1,13 @@
+Representing native data structures:
+
+YAML using three node kinds: sequence - an ordered series of entries; mapping - an unordered association of unique keys to values; and scalar - any datum with opaque structure presentable as a series of Unicode characters. 
+
+sequence: ordered series of entries (arrays, lists, etc)
+mapping:  unordered association of unique keys to values (hash, dictionary, etc)
+scalar:   any datum with opaque structure presentable as a series of Unicode characters (strings, integers, dates, booleans, other atomic data types)
+
+These three combined generate """directed graph structures"""
+
+Requirements:
+
+Each YAML node requires, in addition to its """kind""" and """content""", a """tag""", specifying its data type. Type specifiers are either global URIs or local in scope to a single app.
