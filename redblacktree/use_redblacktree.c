@@ -72,11 +72,13 @@ main()
 	struct rb_node *twentyfive = find(tree, 25);
 
 	printf("%s", twentyfive? "found.\nDeleting..." : "not found.");
-/* TODO: Enable the following
+	/* TODO: Enable the following */
 	if (twentyfive) {
 		del = tree_delete(tree, twentyfive);
 	}
-*/
+
+	del = tree_delete(tree, find(tree, 5));
+
 	printf("\n Done. Traversing... ");
 
 	in_order_traverse(tree);
