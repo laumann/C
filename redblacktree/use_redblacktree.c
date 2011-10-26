@@ -20,15 +20,18 @@ main()
 	tree_insert(tree, 7);
 
 	in_order_traverse(tree);
-
 	paran_view(tree);
 	printf("\n");
 
+	dot(tree, "a", out, "w");
+	
 	for (i=9; i<30; i++)
 		tree_insert(tree, i);
 
 	in_order_traverse(tree);
 	printf("\n");
+
+	dot(tree, "b", out, "a");
 
 	for (i=50; i>30; i--)
 		tree_insert(tree, i);
@@ -36,7 +39,7 @@ main()
 	in_order_traverse(tree);
 	printf("\n");
 
-	dot(tree, "init", out, "w");
+	dot(tree, "c", out, "w");
 
 	struct rb_node *min = tree_minimum(tree), *succ;
 	succ = successor(min);
@@ -63,10 +66,9 @@ main()
 	struct rb_node *twentyfive = find(tree, 25);
 
 	printf("%s", twentyfive? "found.\nDeleting..." : "not found.");
-	/* TODO: Enable the following
+	
 	if (twentyfive)
 		del = tree_delete(tree, twentyfive);
-	*/
 
 	del = tree_delete(tree, find(tree, 5));
 
@@ -84,7 +86,6 @@ main()
 	tree_delete(tree, find(tree, 9));
 	dot(tree, "del9", out, "a");
 
-/*	NOTE: Deletion of key with two children doesn't work */
 	tree_delete(tree, find(tree, 23));
 
 	dot(tree, "del23", out, "a");
