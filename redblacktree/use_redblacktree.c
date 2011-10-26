@@ -3,11 +3,12 @@
 int
 main()
 {
-	printf("Constructing new tree... ");
-	struct redblack_tree *tree = new_tree();
+	struct redblack_tree *tree;
+	const char out[] = "bigtree.dot";
 	int i;
 
-	printf("Done.\nInserting nodes... ");
+	init_tree(&tree);
+
 	/* 4 2 6 3 1 5 7 */
 	
 	tree_insert(tree, 4);
@@ -18,35 +19,24 @@ main()
 	tree_insert(tree, 5);
 	tree_insert(tree, 7);
 
-	printf("Done.\nTraversing... ");
-
 	in_order_traverse(tree);
-
-	printf("Done.\nParanthetical view: ");
 
 	paran_view(tree);
+	printf("\n");
 
-	printf("Done.\nInserting more nodes... ");
-
-	for (i=9; i<30; i++) {
+	for (i=9; i<30; i++)
 		tree_insert(tree, i);
-	}
-
-	printf("Done.\nTraversing... ");
 
 	in_order_traverse(tree);
+	printf("\n");
 
-	printf("Done.\nInserting nodes in reversed order...");
-
-	for (i=50; i>30; i--) {
+	for (i=50; i>30; i--)
 		tree_insert(tree, i);
-	}
-
-	printf("Done.\nTraversing... ");
 
 	in_order_traverse(tree);
+	printf("\n");
 
-	printf(" Done.\nSuccessor of min: ");
+	dot(tree, "init", out, "w");
 
 	struct rb_node *min = tree_minimum(tree), *succ;
 	succ = successor(min);
@@ -66,27 +56,43 @@ main()
 	printf("Done.\nTraversing... ");
 
 	in_order_traverse(tree);
+	dot(tree, "del3", out, "a");
 
 	printf(" Done. Looking for node with key = 25... ");
 
 	struct rb_node *twentyfive = find(tree, 25);
 
 	printf("%s", twentyfive? "found.\nDeleting..." : "not found.");
-	/* TODO: Enable the following */
-	if (twentyfive) {
+	/* TODO: Enable the following
+	if (twentyfive)
 		del = tree_delete(tree, twentyfive);
-	}
+	*/
 
 	del = tree_delete(tree, find(tree, 5));
+
+	dot(tree, "del5", out, "a");
+
+	tree_delete(tree, find(tree, 12));
+	dot(tree, "del12", out, "a");
+
+	tree_delete(tree, find(tree, 1));
+	dot(tree, "del1", out, "a");
+
+	tree_delete(tree, find(tree, 4));
+	dot(tree, "del4", out, "a");
+	
+	tree_delete(tree, find(tree, 9));
+	dot(tree, "del9", out, "a");
+
+/*	NOTE: Deletion of key with two children doesn't work */
+	tree_delete(tree, find(tree, 23));
+
+	dot(tree, "del23", out, "a");
 
 	printf("\n Done. Traversing... ");
 
 	in_order_traverse(tree);
 
-	printf(" Done.\nExiting.\n");
-	
-	in_order_traverse(tree);
-	
 	printf(" Done.\nExiting.\n");;
 
 	exit(0);

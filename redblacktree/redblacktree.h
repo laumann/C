@@ -35,6 +35,6 @@ struct rb_node *predecessor(struct rb_node*);
 
 void in_order_traverse(struct redblack_tree*);
 void paran_view(struct redblack_tree*);
-void dot(struct redblack_tree*, const char *);
+void dot(struct redblack_tree*, const char *, const char *, const char *);
 
 #endif/*_REDBLACKTREE_H*/

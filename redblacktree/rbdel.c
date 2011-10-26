@@ -1,5 +1,7 @@
 #include "redblacktree.h"
 
+static const char out[] = "rbdel.dot";
+
 int main(int argc, char *argv[])
 {
 	struct redblack_tree *tree;
@@ -27,19 +29,23 @@ int main(int argc, char *argv[])
 	paran_view(tree);
 	printf("\n");
 
-	dot(tree, "g.dot");
+	dot(tree, "init", out, "w");
 
 	tree_delete(tree, find(tree, 1));
 	paran_view(tree);
 	printf("\n");
 
-	dot(tree, "del1.dot");
+	dot(tree, "del1", out, "a");
 
 	tree_delete(tree, find(tree, 8));
 	paran_view(tree);
 	printf("\n");
 
-	dot(tree, "del8.dot");
+	dot(tree, "del8", out, "a");
+
+	/* Last test: Delete the root! */
+	tree_delete(tree, tree->root);
+	dot(tree, "delroot", out, "a");
 
 	return 0;
 }

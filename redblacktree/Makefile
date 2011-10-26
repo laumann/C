@@ -1,13 +1,27 @@
 
 CC=gcc
 CFLAGS=-Wall
-C_SRC=use_redblacktree.c redblacktree.c
-C_HDRS=redblacktree.h
+LIB=redblacktree.c
+HDRS=redblacktree.h
+
+all: use_redblacktree rbdel
+
+use_redblacktree: use_redblacktree.c $(LIB) $(HDRS)
+	@echo "Building 'use_redblacktree'"
+	$(CC) $(CFLAGS) -o $@ $< $(LIB)
+
+rbdel: rbdel.c $(LIB) $(HDRS)
+	@echo "Building 'rbdel'"
+	$(CC) $(CFLAGS) -o $@ $< $(LIB)
 
 
-use_redblacktree: $(C_SRC) $(C_HDRS)
-	$(CC) $(CFLAGS) -o use_redblacktree use_redblacktree.c redblacktree.c
+%.ps: %.dot
+	dot -q -Tps -o$@ $<
+
+clean: clean-graphs
+	@rm -fv use_redblacktree rbdel *~ *.swp
+
+clean-graphs:
+	@rm -fv *.ps *.dot
 
 .PHONY: clean
-clean:
-	@rm -fv use_redblacktree *~ *.swp
