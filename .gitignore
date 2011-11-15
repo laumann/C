@@ -1,6 +1,8 @@
 *.swp
 *.[oa]
 *~
+laumann.1
+README.xml
 binarytree
 cbook/array_traversal
 cbook/ex4_3
