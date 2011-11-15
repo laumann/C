@@ -1,5 +1,6 @@
 *.swp
 *.[oa]
+*~
 binarytree
 cbook/array_traversal
 cbook/ex4_3

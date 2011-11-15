@@ -19,20 +19,20 @@
  *
  *****************************************************************************/
 
-#ifdef _DEBUG
+#ifdef DEBUG
 
 #include <stdio.h>
 #include <stdarg.h>
 
-#ifndef _LOG_INDENT_LVL
-# define _LOG_INDENT_LVL 3
+#ifndef LOG_INDENT_LVL
+# define LOG_INDENT_LVL 5
 #endif
 
 char *logg(char *, ...);
 
 #define LOGG(DEBUG_LVL, msg, ...)\
 	fprintf(stderr, "[%s:%d] %-*s %s\n",\
-	__FILE__, __LINE__, _LOG_INDENT_LVL, #DEBUG_LVL, logg(msg, ##__VA_ARGS__));
+	__FILE__, __LINE__, LOG_INDENT_LVL, #DEBUG_LVL, logg(msg, ##__VA_ARGS__));
 
 #define LOG(msg, ...)\
 	fprintf(stderr, "[%s:%d] %s\n",\

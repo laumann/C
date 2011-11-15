@@ -10,3 +10,6 @@ man: doc
 doc: README.txt
 	$(ASCIIDOC) -b docbook -d manpage README.txt
 	$(XMLTO) man README.xml
+
+clean:
+	$(RM) laumann.1 README.xml

@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -D_DEBUG
+CFLAGS = -Wall -DDEBUG
 RM = rm -fv
 
 OBJS=tdebug.o debug.o

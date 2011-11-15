@@ -36,13 +36,13 @@ Following is a list of the directories contained in this library and a short des
 
 *linkedlist*:: A (doubly) linked list implementation.
 
-*recursive_descent_parser* or *rdep*:: A recursive descent expression parser for standard C integer expression.
-
 *pattern*:: A pattern matching program. The code is taken from the penultimate section of *The C Book*, and is a simplistic grep-like program.
 
 *write*:: A simple program that writes the given arguments to a file or to _stdout_ (default is _stdout_). The idea behind this program was to take some inspiration from _git_ about command line arguments and the use of bit operations to indicate set options.
 
 *progress*:: A progress bar, shamelessly stolen from _git_, because I think it's cool and wanted to see if I could get it to work outside _git_.
+
+*debug*:: A minimalistic debug library, inspired in part by the work I saw as a student programmer. It's neat to be able to compile printf-like statements out of any program (also, of course, included are different log levels).
 
 REFERENCES
 ----------
