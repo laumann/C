@@ -33,9 +33,9 @@ int options(int argc, char** argv, const char *legal)
 	int letter = 0;
 
 	if (!*posn) {
-		if ((OptIndex >= argc) ||
-			(*(posn = argv[OptIndex]) != sw_char) ||
-			!*++posn)
+		if ((OptIndex >= argc)
+		    || (*(posn = argv[OptIndex]) != sw_char)
+		    || !*++posn)
 				return -1;
 
 		if (*posn == sw_char) {
