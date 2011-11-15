@@ -38,7 +38,7 @@ static void	error_premature_eof(void);
 /* Globally used variables */
 int	YAML_DIRECTIVE_SPECIFIED;	/* We have by default not seen '%YAML X.Y' */
 
-struct _yaml_version {
+static struct {
 	int major, minor;
 } yaml_version;
 

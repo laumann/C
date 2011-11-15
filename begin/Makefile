@@ -7,9 +7,11 @@ CC	 := gcc
 CFLAGS	 := -Wall
 OBJECTS	 := hello2.o h.o w.o
 PROGRAMS := hello hello2 ager longstring bubble_array trigraph ex1_3 bit bit2\
-		gitbit exp4_4 ex4_1 struct
+		gitbit exp4_4 ex4_1 struct\
+		login
 TARGETS	 := hello hello2 ager str ary_begin exercise1_3 trigraph bit bit2\
-		gitbit example4_4 exercise4_1 struct
+		gitbit example4_4 exercise4_1 struct\
+		login
 
 # If the user didn't specify anything, they will get some help.
 #
@@ -32,6 +34,7 @@ help:
 	@echo "  example4_4     Example 4.4 from 'The C Book' (exp4_4)"
 	@echo "  exercise4_1    Exercise 4.1 from 'The C Book' (ex4_1)"
 	@echo "  struct         A struct example program (struct)"
+	@echo "  login          A login program"
 	@echo ""
 	@echo "Less interesting targets:"
 	@echo "  clean          Clean up"
@@ -96,6 +99,9 @@ exercise4_1: exercise4_1.c
 	$(CC) $(CFLAGS) -o ex4_1 exercise4_1.c
 
 struct: struct.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+login: login.c
 	$(CC) $(CFLAGS) -o $@ $<
 
 .PHONY: clean
