@@ -3,7 +3,7 @@ laumann(1)
 
 NAME
 ----
-laumann - A library of C programs, created for/while learning C by Thomas B. Laumann Jespersen
+laumann - A collection of C programs, created for/while learning C.
 
 SYNOPSIS
 --------
