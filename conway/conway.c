@@ -105,9 +105,11 @@ conway_timeslice(int **current, int **new, int rows, int cols)
 }
 
 const char conway_usage[] = "Usage: ./conway [options]\n\n"
+	" Conway's Game of Life.\n\n"
 	"Common options:\n"
-	" -h,--help                  Print help information and exit.\n"
-	" -i,--interval <millisecs>  Set the update interval.\n";
+	" -h, --help              Print help information and exit.\n"
+	" -i, --interval <msecs>  Set the update interval.\n"
+	" -f, --file <file>       Set in input file.\n";
 
 void
 handle_cmd_args(int *argc, const char ***argv)

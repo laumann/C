@@ -2,7 +2,6 @@ TODO:
 	- Allow options --rows=<int>, --cols=<int> to indicate the size of the
 	  world.
 	- Create ncurses display.
-	- Allow option --interval=<int> that sets the interval times.
 	- Optimisation: Eliminate if's in calculating the sum... rather have
 	  several for loops that each know what to do (without asking
 	  questions).
@@ -27,5 +26,6 @@ TODO:
 	  0 0 1 1
 
 DONE:
+	- Allow option --interval=<int> that sets the interval times.
 	- for every "timeslice", initialise a new array and fill it based on the
 	  values of the old array, then replace the old array.
