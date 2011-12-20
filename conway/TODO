@@ -1,0 +1,31 @@
+TODO:
+	- Allow options --rows=<int>, --cols=<int> to indicate the size of the
+	  world.
+	- Create ncurses display.
+	- Allow option --interval=<int> that sets the interval times.
+	- Optimisation: Eliminate if's in calculating the sum... rather have
+	  several for loops that each know what to do (without asking
+	  questions).
+	- Allow file (--init=<file>) to be specified in the input, in a certain
+	  format.
+	  
+	  Example (the blinker):
+
+	  5 5
+	  0 0 0 0 0	The first two numbers indicate the rows (R) and columns
+	  0 0 0 0 0	(C) respectively. Then should follow R lines of C
+	  0 1 1 1 0	integers (0s or 1s), separated by spaces. Zero (0) means
+	  0 0 0 0 0	"dead" and one (1) "alive". This makes up the initial
+	  0 0 0 0 0	configuration.
+
+	  Here's another example (the beacon):
+
+	  4 4
+	  1 1 0 0
+	  1 0 0 0
+	  0 0 0 1
+	  0 0 1 1
+
+DONE:
+	- for every "timeslice", initialise a new array and fill it based on the
+	  values of the old array, then replace the old array.

@@ -1,3 +1,31 @@
+Quoth: "JSON's RFC4627 requires that mappings keys merely “SHOULD” be unique, while YAML insists they “MUST” be."
+
+C2:
+	(Collections)
+	* YAML block collection use indentation for scope, and begin each entry on a new line
+	* Block sequences indicate each entry with a dash and a space "- "
+	* Mappings use a colon, space ": " to mark each 'key: value' pair
+	* Comments begin with an octothorpe "#"
+
+	(Flow styles)
+	* flow sequence is written as a comma separated list within square brackets "[" e1, ..., en "]"
+	* similarly, flow mapping uses curly braces "{" k1: v1, ..., kn: vn "}"
+
+	(Structures)
+	* three dashes "---" to separate directives from document content. Serves to signal the start of a document if no directives are present
+	* Three dots "..." indicate the end of a document without starting a new one
+	* Repeated nodes (objects) are first identified by an anchor "&", then referenced with "*" later
+	* A question mark and space "?" indicate a complex mapping key. Within a block collection, key: value pairs can start immediately following the dash, colon, or question mark.
+
+	(Scalars)
+	* Scalar content can be written in block notation, using a literal style "|" where all line breaks are significant
+	* Folded style is indicated by ">" where each line break is folded into a single space, unless it's an empty line, or more-indented
+	* Flow scalars include the plain style and two quoted styles, where double-quoted style provides escape sequences.
+	* Single quoted style is useful when escaping is not needed.
+	* All flow scalars can span multiple lines; line breaks are always folded
+
+	(Tags)
+
 Representing native data structures:
 
 YAML using three node kinds: sequence - an ordered series of entries; mapping - an unordered association of unique keys to values; and scalar - any datum with opaque structure presentable as a series of Unicode characters. 
