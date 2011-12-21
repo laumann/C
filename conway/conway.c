@@ -2,15 +2,16 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <curses.h>
 
-#define COLS	20
-#define ROWS	10
-#define INTERVAL 1000
+#define COLS	25
+#define ROWS	80
+#define TIMEOUT 1000
 
 int nrows = ROWS;
 int ncols = COLS;
 
-int interval = INTERVAL;
+int interval = TIMEOUT;
 
 /**
  * Free an array
@@ -108,7 +109,7 @@ const char conway_usage[] = "Usage: ./conway [options]\n\n"
 	" Conway's Game of Life.\n\n"
 	"Common options:\n"
 	" -h, --help              Print help information and exit.\n"
-	" -i, --interval <msecs>  Set the update interval.\n"
+	" -t, --timeout <msecs>   Set the timeout interval between updates.\n"
 	" -f, --file <file>       Set in input file.\n";
 
 void
@@ -121,7 +122,7 @@ handle_cmd_args(int *argc, const char ***argv)
 			printf("%s", conway_usage);
 			exit(0);
 		}
-		else if (!strcmp(cmd, "--interval") || !strcmp(cmd, "-i")) {
+		else if (!strcmp(cmd, "--timeout") || !strcmp(cmd, "-t")) {
 			if (*argc < 2) {
 				fprintf(stderr, "--interval requires an integer argument\n");
 				exit(EXIT_FAILURE);
@@ -143,6 +144,18 @@ handle_cmd_args(int *argc, const char ***argv)
 	}
 }
 
+void
+updatescr(WINDOW *win, int **ary, int rows, int cols)
+{
+	int i,j;
+	wclear(win);
+	for (i=0; i < rows; i++)
+		for (j=0; j < cols; j++)
+			if (ary[i][j])
+				mvwaddch(win, j, i, ACS_CKBOARD);
+	wrefresh(win);
+}
+
 /**
  * Conway's Game of Life.
  */
@@ -162,21 +175,37 @@ int main(int argc, char *argv[])
 	 * 0 0 0 0 1
 	 * 0 0 0 1 1
 	 */
-	ary0[1][1] = 1;
-	ary0[1][2] = 1;
-	ary0[2][1] = 1;
+	/* ary0[1][1] = 1; */
+	/* ary0[1][2] = 1; */
+	/* ary0[2][1] = 1; */
 
-	ary0[4][4] = 1;
-	ary0[3][4] = 1;
-	ary0[4][3] = 1;
+	/* ary0[4][4] = 1; */
+	/* ary0[3][4] = 1; */
+	/* ary0[4][3] = 1; */
+
+	ary0[39][15] = 1;
+	ary0[40][15] = 1;
+	ary0[41][15] = 1;
+	ary0[39][16] = 1;
+	ary0[39][17] = 1;
+	ary0[41][16] = 1;
+	ary0[41][17] = 1;
+
+
+	/* ncurses! */
+	initscr();
+	cbreak();
+	timeout(interval);
+	keypad(stdscr, TRUE);
 
 	int **current, **next;
 	int aoeu = 0;
 
-	print_ary(ary0, nrows, ncols);
-	printf("\n");
+	updatescr(stdscr, ary0, nrows, ncols);
+	/* print_ary(ary0, nrows, ncols); */
+	/* printf("\n"); */
 
-	/* Now - run forever! Infinite loop? I don't have time for that! */
+	/* An infinite loop? I don't have time for that! */
 	for (;;) {
 		if (aoeu) {
 			current = ary1;
@@ -189,10 +218,13 @@ int main(int argc, char *argv[])
 		conway_timeslice(current, next, nrows, ncols);
 		aoeu = (aoeu) ? 0 : 1;
 
-		print_ary(next, nrows, ncols);
-		printf("\n");
+		updatescr(stdscr, next, nrows, ncols);
+
+		/* print_ary(next, nrows, ncols); */
+		/* printf("\n"); */
 
 		usleep(interval);
 	}
+	endwin();
 	return 0;
 }
