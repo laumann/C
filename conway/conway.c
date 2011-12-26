@@ -92,15 +92,11 @@ conway_timeslice(int **current, int **new, int rows, int cols)
 	int i, j, sum;
 	for (i=0; i<rows; i++) {
 		for (j=0; j<cols; j++) {
-			new[i][j] = current[i][j]; /* copy! */
-
 			sum = neighbor_sum(current,i,j);
 
-			/* Rule 1 + 3: He dies (under- and overpopulation) */
-			if (current[i][j] && (sum < 2 || sum > 3))
-				new[i][j] = 0;
-			else if (sum == 3) /* dead */
-				new[i][j] = 1;
+			new[i][j] = (current[i][j]) ?
+				((sum == 2 || sum == 3) ? 1 : 0) :
+				((sum == 3) ? 1 : 0);
 		}
 	}
 }
@@ -113,7 +109,7 @@ const char conway_usage[] = "Usage: ./conway [options]\n\n"
 	" -f, --file <file>       Set in input file.\n";
 
 void
-handle_cmd_args(int *argc, const char ***argv)
+handle_cmd_args(int *argc, char ***argv)
 {
 	while (*argc > 0) {
 		const char *cmd = (*argv)[0];
