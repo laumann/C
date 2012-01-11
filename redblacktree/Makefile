@@ -1,6 +1,6 @@
 
 CC=gcc
-CFLAGS=-Wall
+CFLAGS=-Wall -O2
 LIB=redblacktree.c
 HDRS=redblacktree.h
 
@@ -14,7 +14,6 @@ rbdel: rbdel.c $(LIB) $(HDRS)
 	@echo "Building 'rbdel'"
 	$(CC) $(CFLAGS) -o $@ $< $(LIB)
 
-
 %.ps: %.dot
 	dot -q -Tps -o$@ $<
 
@@ -24,4 +23,4 @@ clean: clean-graphs
 clean-graphs:
 	@rm -fv *.ps *.dot
 
-.PHONY: clean
+.PHONY: clean clean-graphs

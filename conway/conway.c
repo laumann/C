@@ -148,7 +148,7 @@ updatescr(WINDOW *win, int **ary, int rows, int cols)
 	for (i=0; i < rows; i++)
 		for (j=0; j < cols; j++)
 			if (ary[i][j])
-				mvwaddch(win, j, i, ACS_CKBOARD);
+				mvwaddch(win, j, i, ACS_BOARD);
 	wrefresh(win);
 }
 
@@ -187,6 +187,7 @@ int main(int argc, char *argv[])
 	ary0[41][16] = 1;
 	ary0[41][17] = 1;
 
+	int rmax, cmax;
 
 	/* ncurses! */
 	initscr();
@@ -196,6 +197,10 @@ int main(int argc, char *argv[])
 
 	int **current, **next;
 	int aoeu = 0;
+
+	getmaxyx(stdscr, rmax, cmax);
+	mvprintw(rmax-2, 0, "This screen has %d rows and %d columns.\n", rmax, cmax);
+	getch();
 
 	updatescr(stdscr, ary0, nrows, ncols);
 	/* print_ary(ary0, nrows, ncols); */
