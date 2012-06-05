@@ -17,7 +17,6 @@ PROJECTS+=tblj-yaml
 PROJECTS+=trigrapher
 PROJECTS+=UVa
 PROJECTS+=write
-PROJECTS+=yaml1_1
 
 all:
 	@for p in $(PROJECTS); do make -C $$p; done
