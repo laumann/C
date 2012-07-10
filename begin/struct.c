@@ -44,5 +44,5 @@ struct_pointer_f(x *zp)
 void
 print_function(const char *fname, const char *name, int value)
 {
-	printf("%16s: %8s = %d\n", fname, name, value);
+	printf("%-16s: %8s = %d\n", fname, name, value);
 }

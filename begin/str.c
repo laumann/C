@@ -5,19 +5,19 @@
 int
 main(int argc, char **argv)
 {
-  char string[BUFSIZ];
-  char *p;
+	char string[BUFSIZ];
+	char *p;
 
-  printf("Please enter a long string (max length: %d): ", sizeof(string));
+	printf("Please enter a long string (max length: %d): ", sizeof(string));
 
-  if (fgets(string, sizeof(string), stdin) != NULL) {
-    printf("Thank you. You entered >%s<\n",string);
+	if (fgets(string, sizeof(string), stdin) != NULL) {
+		printf("Thank you. You entered >%s<\n",string);
 
-    if ((p = strchr(string, '\n')) != NULL)
-      *p = '\0';
+		if ((p = strchr(string, '\n')) != NULL)
+			*p = '\0';
     
-    printf("And now our string is >%s<\n", string);
-  }
+		printf("And now our string is >%s<\n", string);
+	}
 
-  exit(0);
+	exit(0);
 }
