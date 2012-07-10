@@ -40,4 +40,6 @@ begin/hello2
 begin/longstring
 begin/struct
 begin/trigraph
+begin/utsname
+begin/login
 the_c_book.pdf
