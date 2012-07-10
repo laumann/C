@@ -2,9 +2,6 @@
 #include <unistd.h>
 #include <string.h>
 
-#define TOTAL	300
-#define DELAY	200
-
 static char usage_string[] =
 	"Usage: use_progress [options]...\n\n"
 	"Options:\n"
@@ -20,8 +17,8 @@ static struct {
 	char *msg;
 } config = {
 	/* Defaults */
-	.delay = DELAY, 
-	.total = TOTAL,
+	.delay = 150, 
+	.total = 300,
 	.msg   = "Process"
 };
 

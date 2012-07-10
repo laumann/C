@@ -8,10 +8,27 @@ CFLAGS	 := -Wall
 OBJECTS	 := hello2.o h.o w.o
 PROGRAMS := hello hello2 ager longstring bubble_array trigraph ex1_3 bit bit2\
 		gitbit exp4_4 ex4_1 struct\
-		login
-TARGETS	 := hello hello2 ager str ary_begin exercise1_3 trigraph bit bit2\
-		gitbit example4_4 exercise4_1 struct\
-		login
+		login utsname
+
+TARGETS := hello
+TARGETS += hello2
+TARGETS += ager
+TARGETS += str
+TARGETS += ary_begin
+TARGETS += exercise1_3
+TARGETS += trigraph
+TARGETS += bit
+TARGETS += bit2
+TARGETS += gitbit
+TARGETS += example4_4
+TARGETS += exercise4_1
+TARGETS += struct
+TARGETS += login
+TARGETS += utsname
+
+# TARGETS	 := hello hello2 ager str ary_begin exercise1_3 trigraph bit bit2\
+# 		gitbit example4_4 exercise4_1 struct\
+# 		login utsname
 
 # If the user didn't specify anything, they will get some help.
 #
@@ -35,6 +52,7 @@ help:
 	@echo "  exercise4_1    Exercise 4.1 from 'The C Book' (ex4_1)"
 	@echo "  struct         A struct example program (struct)"
 	@echo "  login          A login program"
+	@echo "  utsname        Prints system information using uname()"
 	@echo ""
 	@echo "Less interesting targets:"
 	@echo "  clean          Clean up"
@@ -59,24 +77,19 @@ h.o: h.c
 w.o: w.c
 	$(CC) $(CFLAGS) -c w.c
 
-# Age determining program
-ager: ageif.c
+ager: ageif.c			# Age determining program
 	$(CC) $(CFLAGS) -o ager ageif.c
 
-# Strings
-str: str.c
+str: str.c			# Strings
 	$(CC) $(CFLAGS) -o longstring str.c
 
-# Bubble sort an array
-ary_begin: ary_begin.c
+ary_begin: ary_begin.c		# Bubble sort an array
 	$(CC) $(CFLAGS) -o bubble_array ary_begin.c
 
-# Exercise 1.3 from "The C Book"
-exercise1_3: exercise1_3.c
+exercise1_3: exercise1_3.c	# Exercise 1.3 from "The C Book"
 	$(CC) $(CFLAGS) -o ex1_3 exercise1_3.c
 
-# Program with trigraphs
-trigraph: trigrapher.c
+trigraph: trigrapher.c		# Program with trigraphs
 	$(CC) $(CFLAGS) -trigraphs -o trigraph trigrapher.c
 
 bit: bit.c
@@ -91,8 +104,7 @@ gitbit: gitbit.c printbits.o
 printbits.o: printbits.c printbits.h
 	$(CC) $(CFLAGS) -c printbits.c
 
-# Example 4.4 from "The C Book"
-example4_4: example4_4.c
+example4_4: example4_4.c 	# Example 4.4 from "The C Book"
 	$(CC) $(CFLAGS) -o exp4_4 example4_4.c
 
 exercise4_1: exercise4_1.c
@@ -102,6 +114,9 @@ struct: struct.c
 	$(CC) $(CFLAGS) -o $@ $<
 
 login: login.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+utsname: utsname.c
 	$(CC) $(CFLAGS) -o $@ $<
 
 .PHONY: clean
