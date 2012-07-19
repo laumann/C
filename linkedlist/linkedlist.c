@@ -95,7 +95,7 @@ int linked_list_insert(struct linked_list *list, struct linked_list_node *item)
 		;
 	*/
 
-	while (1) {
+	for (;;) {
 		if (n==NULL)
 			break;
 		last = n;
@@ -124,7 +124,7 @@ struct linked_list_node* linked_list_pop(struct linked_list* l)
 		;
 	*/
 
-	while (1) {
+	for (;;) {
 		if (n->next)
 			n = n->next;
 		else
