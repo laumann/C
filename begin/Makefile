@@ -8,7 +8,8 @@ CFLAGS	 := -Wall
 OBJECTS	 := hello2.o h.o w.o
 PROGRAMS := hello hello2 ager longstring bubble_array trigraph ex1_3 bit bit2\
 		gitbit exp4_4 ex4_1 struct\
-		login utsname
+		login utsname\
+		chessboard printchars
 
 TARGETS := hello
 TARGETS += hello2
@@ -25,6 +26,8 @@ TARGETS += exercise4_1
 TARGETS += struct
 TARGETS += login
 TARGETS += utsname
+TARGETS += chessboard
+TARGETS += printchars
 
 # TARGETS	 := hello hello2 ager str ary_begin exercise1_3 trigraph bit bit2\
 # 		gitbit example4_4 exercise4_1 struct\
@@ -51,8 +54,10 @@ help:
 	@echo "  example4_4     Example 4.4 from 'The C Book' (exp4_4)"
 	@echo "  exercise4_1    Exercise 4.1 from 'The C Book' (ex4_1)"
 	@echo "  struct         A struct example program (struct)"
-	@echo "  login          A login program"
-	@echo "  utsname        Prints system information using uname()"
+	@echo "  login          A login program (login)"
+	@echo "  utsname        Prints system information using uname() (utsname)"
+	@echo "  printchars     Prints characters (printchars)"
+	@echo "  chessboard     Print a chess board (chessboard)"
 	@echo ""
 	@echo "Less interesting targets:"
 	@echo "  clean          Clean up"
@@ -117,6 +122,12 @@ login: login.c
 	$(CC) $(CFLAGS) -o $@ $<
 
 utsname: utsname.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+printchars: printchars.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+chessboard: chessboard.c
 	$(CC) $(CFLAGS) -o $@ $<
 
 .PHONY: clean
