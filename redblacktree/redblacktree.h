@@ -26,7 +26,7 @@ struct rb_node {
 int init_tree(struct redblack_tree**);
 void tree_insert(struct redblack_tree*, int);
 struct rb_node *tree_delete(struct redblack_tree*, struct rb_node*);
-struct rb_node *find(struct redblack_tree*, int key);
+struct rb_node *tree_find(struct redblack_tree*, int key);
 
 struct rb_node *tree_maximum(struct redblack_tree*);
 struct rb_node *tree_minimum(struct redblack_tree*);

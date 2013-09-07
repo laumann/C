@@ -24,6 +24,9 @@ cbook/exp9_4
 cbook/silly
 cbook/use_sinecosine
 redblacktree/use_redblacktree
+redblacktree/rbdel
+redblacktree/*.dot
+redblacktree/*.ps
 progress/bin/use_progress
 UVa/bachet10404/bachet
 UVa/verweggistan812/verweggistan

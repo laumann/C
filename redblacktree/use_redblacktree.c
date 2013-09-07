@@ -1,7 +1,6 @@
 #include "redblacktree.h"
 
-int
-main()
+int main()
 {
 	struct redblack_tree *tree;
 	const char out[] = "bigtree.dot";
@@ -33,7 +32,7 @@ main()
 
 	dot(tree, "b", out, "a");
 
-	for (i=50; i>30; i--)
+	for (i = 50; i > 30; i--)
 		tree_insert(tree, i);
 
 	in_order_traverse(tree);
@@ -63,30 +62,30 @@ main()
 
 	printf(" Done. Looking for node with key = 25... ");
 
-	struct rb_node *twentyfive = find(tree, 25);
+	struct rb_node *twentyfive = tree_find(tree, 25);
 
-	printf("%s", twentyfive? "found.\nDeleting..." : "not found.");
+	printf("%s", twentyfive ? "found.\nDeleting..." : "not found.");
 	
 	if (twentyfive)
 		del = tree_delete(tree, twentyfive);
 
-	del = tree_delete(tree, find(tree, 5));
+	del = tree_delete(tree, tree_find(tree, 5));
 
 	dot(tree, "del5", out, "a");
 
-	tree_delete(tree, find(tree, 12));
+	tree_delete(tree, tree_find(tree, 12));
 	dot(tree, "del12", out, "a");
 
-	tree_delete(tree, find(tree, 1));
+	tree_delete(tree, tree_find(tree, 1));
 	dot(tree, "del1", out, "a");
 
-	tree_delete(tree, find(tree, 4));
+	tree_delete(tree, tree_find(tree, 4));
 	dot(tree, "del4", out, "a");
 	
-	tree_delete(tree, find(tree, 9));
+	tree_delete(tree, tree_find(tree, 9));
 	dot(tree, "del9", out, "a");
 
-	tree_delete(tree, find(tree, 23));
+	tree_delete(tree, tree_find(tree, 23));
 
 	dot(tree, "del23", out, "a");
 

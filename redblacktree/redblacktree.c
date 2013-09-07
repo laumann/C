@@ -20,7 +20,7 @@ static void paran_v(struct rb_node*);
 /* static void dump_node(struct rb_node*); */
 
 /* NIL node */
-static struct rb_node __NIL = { BLACK, 0, NULL, NULL, NULL, NULL };
+static struct rb_node __NIL = {BLACK, 0, NULL, NULL, NULL, NULL};
 static const struct rb_node *NIL = &__NIL;
 #define nil	(struct rb_node*)NIL
 
@@ -31,8 +31,7 @@ static const struct rb_node *NIL = &__NIL;
 
 /* functions */
 
-int
-init_tree(struct redblack_tree **t)
+int init_tree(struct redblack_tree **t)
 {
 	*t = ALLOC_TREE;
 	if (!*t)
@@ -42,8 +41,7 @@ init_tree(struct redblack_tree **t)
 	return OK;
 }
 
-void
-tree_insert(struct redblack_tree *T, int key)
+void tree_insert(struct redblack_tree *T, int key)
 {
 	struct rb_node *z = ALLOC_NODE; 
 	struct rb_node *y = nil;
@@ -51,16 +49,15 @@ tree_insert(struct redblack_tree *T, int key)
 
 	z->key = key;
 	
-	while (x != NIL) {
+	while (x != nil) {
 		y = x;
 		x = (z->key < x->key) ? x->left	: x->right;
 	}
-
 	z->parent = y;
 
-	if (y == NIL)
+	if (y == nil) {
 		T->root = z;
-	else {
+	} else {
 		if (z->key < y->key)
 			y->left = z;
 		else
@@ -95,8 +92,7 @@ dump_node(struct rb_node *x)
 }
 */
 
-static void
-rb_insert_fixup(struct redblack_tree *T, struct rb_node *z)
+static void rb_insert_fixup(struct redblack_tree *T, struct rb_node *z)
 {
 	struct rb_node *g, *y;
 	while (z->parent->color == RED) {	/* parent is never null */
@@ -108,8 +104,7 @@ rb_insert_fixup(struct redblack_tree *T, struct rb_node *z)
 				y->color = BLACK;
 				g->color = RED;
 				z = g;
-			}
-			else {
+			} else {
 				if (z == z->parent->right) {
 					z = z->parent;
 					rotate_left(T, z);
@@ -119,16 +114,14 @@ rb_insert_fixup(struct redblack_tree *T, struct rb_node *z)
 				g->color = RED;
 				rotate_right(T, g);
 			}
-		}
-		else {	/* Same as first part with "right" and "left" exchanged */
+		} else {	/* Same as first part with "right" and "left" exchanged */
 			y = g->left;
 			if (y->color == RED) {
 				z->parent->color = BLACK;
 				y->color = BLACK;
 				g->color = RED;
 				z = g;
-			}
-			else { 
+			} else { 
 				if (z == z->parent->left) {
 					z = z->parent;
 					rotate_right(T, z);
@@ -143,32 +136,28 @@ rb_insert_fixup(struct redblack_tree *T, struct rb_node *z)
 	T->root->color = BLACK;
 }
 
-struct rb_node *
-find(struct redblack_tree *tree, int key)
+struct rb_node *tree_find(struct redblack_tree *tree, int key)
 {
 	return tree_search(tree->root, key);
 }
 
-static struct rb_node *
-tree_search(struct rb_node *x, int key)
+static struct rb_node *tree_search(struct rb_node *x, int key)
 {
-	for ( ; x != NIL && x->key != key; x = (key < x->key) ? x->left : x->right)
+	for ( ; x != nil && x->key != key; x = (key < x->key) ? x->left : x->right)
 		;
 	return x;
 }
 
-void
-in_order_traverse(struct redblack_tree *tree)
+void in_order_traverse(struct redblack_tree *tree)
 {
 	printf("Root is '%d' (size: %d)\n", tree->root->key, tree->size);
 	traverse_i(tree->root);
 }
 
-static void
-traverse_i(struct rb_node *n)
+static void traverse_i(struct rb_node *n)
 {
 	static int depth = 0;
-	if (n == NIL)
+	if (n == nil)
 		return;
 	depth++;
 	traverse_i(n->left);
@@ -177,31 +166,29 @@ traverse_i(struct rb_node *n)
 	depth--;
 }
 
-static void
-dotty(struct rb_node *n, FILE *fp)
+static void dotty(struct rb_node *n, FILE *fp)
 {
 	/* Declare node */
 	fprintf(fp, "    n%d [label=\"%d\",color=%s,fontcolor=white,style=filled, shape=circle, width=0.5, fixedsize=true,fontname=Palatino];\n",
 		n->key, n->key, (n->color == BLACK) ? "black" : "red");
 
-	if (n->left != NIL) {
+	if (n->left != nil) {
 		dotty(n->left, fp);
 		fprintf(fp, "    n%d -- n%d;\n", n->key, n->left->key);
 	}
 
-	if (n->right != NIL) {
+	if (n->right != nil) {
 		dotty(n->right, fp);
 		fprintf(fp, "    n%d -- n%d;\n", n->key, n->right->key);
 	}
 }
 
 /* Write a dot graph of the tree to file */
-void
-dot(struct redblack_tree *tree, const char *name, const char *file, const char *mode)
+void dot(struct redblack_tree *tree, const char *name, const char *file, const char *mode)
 {
 	FILE *fp;
 	
-	if (tree->root == NIL)	/* No tree - don't write anything! */
+	if (tree->root == nil)	/* No tree - don't write anything! */
 		return;
 
 /*	printf("Writing tree to file '%s'\n", file);	*/
@@ -217,17 +204,15 @@ dot(struct redblack_tree *tree, const char *name, const char *file, const char *
 		printf("Error closing file %s\n (%d)", file, errno);
 }
 
-void
-paran_view(struct redblack_tree *tree)
+void paran_view(struct redblack_tree *tree)
 {
 	printf(" root=%d ", tree->root->key);	
 	paran_v(tree->root);
 }
 
-static void
-paran_v(struct rb_node *n)
+static void paran_v(struct rb_node *n)
 {
-	if (n == NIL) 
+	if (n == nil)
 		return;
 	printf("(");
 	printf("%d", n->key);
@@ -245,15 +230,14 @@ paran_v(struct rb_node *n)
 a   b        b   c
 
  */
-static void
-rotate_right(struct redblack_tree *t, struct rb_node *y)
+static void rotate_right(struct redblack_tree *t, struct rb_node *y)
 {
 	struct rb_node *x = y->left;
 	y->left = x->right;
-	if (x->right != NIL)
+	if (x->right != nil)
 		x->right->parent = y;
 	x->parent = y->parent;
-	if (y->parent == NIL)
+	if (y->parent == nil)
 		t->root = x;
 	else 
 		if (y == y->parent->left)
@@ -273,18 +257,17 @@ rotate_right(struct redblack_tree *t, struct rb_node *y)
 a   b        b   c
 
  */
-static void
-rotate_left(struct redblack_tree *t, struct rb_node *x)
+static void rotate_left(struct redblack_tree *t, struct rb_node *x)
 {
 	struct rb_node *y = x->right;
 	x->right = y->left;
 
-	if (y->left != NIL)
+	if (y->left != nil)
 		y->left->parent = x;
 	
 	y->parent = x->parent;
 
-	if (x->parent == NIL)
+	if (x->parent == nil)
 		t->root = y;
 	else
 		if (x == x->parent->left)
@@ -296,31 +279,32 @@ rotate_left(struct redblack_tree *t, struct rb_node *x)
 	x->parent = y;
 }
 
-static inline struct rb_node *
-grandparent(struct rb_node *n)
+static inline struct rb_node *grandparent(struct rb_node *n)
 {
-	if (n != NIL && n->parent != NIL)
+	return (n == nil || n->parent == nil) ? nil : n->parent->parent;
+	/*
+	if (n != nil && n->parent != nil)
 		return n->parent->parent;
 	else
 		return nil;
+	*/
 }
 
-struct rb_node *
-tree_delete(struct redblack_tree *T, struct rb_node *z)
+struct rb_node *tree_delete(struct redblack_tree *T, struct rb_node *z)
 {
 	struct rb_node *y, *x;
 
-	y = (z->left == NIL || z->right == NIL)
+	y = (z->left == nil || z->right == nil)
 		? z
 		: successor(z);
 
-	x = (y->left != NIL)
+	x = (y->left != nil)
 		? y->left
 		: y->right;
 	
 	x->parent = y->parent;
 	
-	if (y->parent == NIL)
+	if (y->parent == nil)
 		T->root = x;
 	else {
 		if (y == y->parent->left)
@@ -344,8 +328,7 @@ tree_delete(struct redblack_tree *T, struct rb_node *z)
 /*
  * TODO Write code that thoroughly tests this (all the various cases)
  */
-static void
-rb_delete_fixup(struct redblack_tree *T, struct rb_node *x)
+static void rb_delete_fixup(struct redblack_tree *T, struct rb_node *x)
 {
 	struct rb_node *w;
 	while (x != T->root && x->color == BLACK) {
@@ -361,8 +344,7 @@ rb_delete_fixup(struct redblack_tree *T, struct rb_node *x)
 			if (w->left->color == BLACK && w->right->color == BLACK) {
 				w->color = RED;
 				x = x->parent;
-			}
-			else {
+			} else {
 				if (w->right->color == BLACK) {
 					w->left->color = BLACK;
 					w->color = RED;
@@ -375,8 +357,7 @@ rb_delete_fixup(struct redblack_tree *T, struct rb_node *x)
 				rotate_left(T, x->parent);
 				x = T->root;
 			}
-		}
-		else {	/* Same as above, but "right" and "left" exchanged */		
+		} else {	/* Same as above, but "right" and "left" exchanged */
 			w = x->parent->left;
 			if (w->color == RED) {
 				w->color = BLACK;
@@ -387,8 +368,7 @@ rb_delete_fixup(struct redblack_tree *T, struct rb_node *x)
 			if (w->right->color == BLACK && w->left->color == BLACK) {
 				w->color = RED;
 				x = x->parent;
-			}
-			else {
+			} else {
 				if (w->left->color == BLACK) {
 					w->right->color = BLACK;
 					w->color = RED;
@@ -406,46 +386,43 @@ rb_delete_fixup(struct redblack_tree *T, struct rb_node *x)
 	x->color = BLACK;
 }
 
-struct rb_node *
-tree_maximum(struct redblack_tree* t)
+struct rb_node *tree_maximum(struct redblack_tree* t)
 {
 	return call_if_root(t, &max);
 }
 
-struct rb_node *
-tree_minimum(struct redblack_tree* t)
+struct rb_node *tree_minimum(struct redblack_tree* t)
 {
 	return call_if_root(t, &min);
 }
 
-struct rb_node *
-call_if_root(struct redblack_tree* t, struct rb_node *(*f)(struct rb_node*))
+struct rb_node *call_if_root(struct redblack_tree* t, struct rb_node *(*f)(struct rb_node*))
 {
-	if (t->root != NIL)
+	if (t->root != nil)
 		return f(t->root);
 	return nil;
 }
 
-struct rb_node *
-successor(struct rb_node *x)
+struct rb_node *successor(struct rb_node *x)
 {
-	if (x->right != NIL)
+	if (x->right != nil)
 		return min(x->right);
+
 	struct rb_node *y = x->parent;
-	while (y != NIL && x == y->right) {
+	while (y != nil && x == y->right) {
 		x = y;
 		y = y->parent;
 	}
 	return y;
 }
 
-struct rb_node *
-predecessor(struct rb_node *x)
+struct rb_node *predecessor(struct rb_node *x)
 {
-	if (x->left != NIL)
+	if (x->left != nil)
 		return max(x->left);
+
 	struct rb_node *y = x->parent;
-	while (y != NIL && x == y->left) {
+	while (y != nil && x == y->left) {
 		x = y;
 		y = y->parent;
 	}
@@ -455,7 +432,7 @@ predecessor(struct rb_node *x)
 static inline struct rb_node *
 min(struct rb_node *x)
 {
-	for (; x->left != NIL; x = x->left)
+	for (; x->left != nil; x = x->left)
 		;
 	return x;
 }
@@ -463,7 +440,7 @@ min(struct rb_node *x)
 static inline struct rb_node *
 max(struct rb_node *x)
 {
-	for (; x->right != NIL; x = x->right)
+	for (; x->right != nil; x = x->right)
 		;
 	return x;
 }

@@ -31,13 +31,13 @@ int main(int argc, char *argv[])
 
 	dot(tree, "init", out, "w");
 
-	tree_delete(tree, find(tree, 1));
+	tree_delete(tree, tree_find(tree, 1));
 	paran_view(tree);
 	printf("\n");
 
 	dot(tree, "del1", out, "a");
 
-	tree_delete(tree, find(tree, 8));
+	tree_delete(tree, tree_find(tree, 8));
 	paran_view(tree);
 	printf("\n");
 
