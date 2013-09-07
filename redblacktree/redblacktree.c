@@ -55,14 +55,12 @@ void tree_insert(struct redblack_tree *T, int key)
 	}
 	z->parent = y;
 
-	if (y == nil) {
+	if (y == nil)
 		T->root = z;
-	} else {
-		if (z->key < y->key)
-			y->left = z;
-		else
-			y->right = z;
-	}
+	else if (z->key < y->key)
+		y->left = z;
+	else
+		y->right = z;
 
 	z->left = nil;
 	z->right = nil;
@@ -269,11 +267,10 @@ static void rotate_left(struct redblack_tree *t, struct rb_node *x)
 
 	if (x->parent == nil)
 		t->root = y;
+	else if (x == x->parent->left)
+		x->parent->left = y;
 	else
-		if (x == x->parent->left)
-			x->parent->left = y;
-		else
-			x->parent->right = y;
+		x->parent->right = y;
 	
 	y->left = x;
 	x->parent = y;
@@ -282,15 +279,9 @@ static void rotate_left(struct redblack_tree *t, struct rb_node *x)
 static inline struct rb_node *grandparent(struct rb_node *n)
 {
 	return (n == nil || n->parent == nil) ? nil : n->parent->parent;
-	/*
-	if (n != nil && n->parent != nil)
-		return n->parent->parent;
-	else
-		return nil;
-	*/
 }
 
-struct rb_node *tree_delete(struct redblack_tree *T, struct rb_node *z)
+struct rb_node *tree_delete(struct redblack_tree *t, struct rb_node *z)
 {
 	struct rb_node *y, *x;
 
@@ -305,13 +296,11 @@ struct rb_node *tree_delete(struct redblack_tree *T, struct rb_node *z)
 	x->parent = y->parent;
 	
 	if (y->parent == nil)
-		T->root = x;
-	else {
-		if (y == y->parent->left)
-			y->parent->left = x;
-		else
-			y->parent->right = x;
-	}
+		t->root = x;
+	else if (y == y->parent->left)
+		y->parent->left = x;
+	else
+		y->parent->right = x;
 	
 	if (y != z) { /* true <=> z has two children */
 		z->key = y->key;
@@ -319,26 +308,26 @@ struct rb_node *tree_delete(struct redblack_tree *T, struct rb_node *z)
 	}
 	
 	if (y->color == BLACK)
-		rb_delete_fixup(T, x);
+		rb_delete_fixup(t, x);
 
-	T->size--;
+	t->size--;
 	return y;
 }
 
 /*
  * TODO Write code that thoroughly tests this (all the various cases)
  */
-static void rb_delete_fixup(struct redblack_tree *T, struct rb_node *x)
+static void rb_delete_fixup(struct redblack_tree *t, struct rb_node *x)
 {
 	struct rb_node *w;
-	while (x != T->root && x->color == BLACK) {
+	while (x != t->root && x->color == BLACK) {
 		/* x is a left child */
 		if (x == x->parent->left) {
 			w = x->parent->right;
 			if (w->color == RED) {
 				w->color = BLACK;
 				x->parent->color = RED;
-				rotate_left(T, x->parent);
+				rotate_left(t, x->parent);
 				w = x->parent->right;
 			}
 			if (w->left->color == BLACK && w->right->color == BLACK) {
@@ -348,21 +337,21 @@ static void rb_delete_fixup(struct redblack_tree *T, struct rb_node *x)
 				if (w->right->color == BLACK) {
 					w->left->color = BLACK;
 					w->color = RED;
-					rotate_right(T, w);
+					rotate_right(t, w);
 					w = x->parent->right;
 				}
 				w->color = x->parent->color;
 				x->parent->color = BLACK;
 				w->right->color = BLACK;
-				rotate_left(T, x->parent);
-				x = T->root;
+				rotate_left(t, x->parent);
+				x = t->root;
 			}
 		} else {	/* Same as above, but "right" and "left" exchanged */
 			w = x->parent->left;
 			if (w->color == RED) {
 				w->color = BLACK;
 				x->parent->color = RED;
-				rotate_right(T, x->parent);
+				rotate_right(t, x->parent);
 				w = x->parent->left;
 			}
 			if (w->right->color == BLACK && w->left->color == BLACK) {
@@ -372,14 +361,14 @@ static void rb_delete_fixup(struct redblack_tree *T, struct rb_node *x)
 				if (w->left->color == BLACK) {
 					w->right->color = BLACK;
 					w->color = RED;
-					rotate_left(T, w);
+					rotate_left(t, w);
 					w = x->parent->left;
 				}
 				w->color = x->parent->color;
 				x->parent->color = BLACK;
 				w->left->color = BLACK;
-				rotate_right(T, x->parent);
-				x = T->root;
+				rotate_right(t, x->parent);
+				x = t->root;
 			}
 		}
 	}
