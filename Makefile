@@ -13,6 +13,7 @@ PROJECTS+=linkedlist
 PROJECTS+=pattern
 PROJECTS+=progress
 PROJECTS+=redblacktree
+Projects
 PROJECTS+=tblj-yaml
 PROJECTS+=trigrapher
 PROJECTS+=UVa
