@@ -28,5 +28,5 @@ main(int argc, char** argv)
 	ip = ar;		/* Address of first element */
 	ip = &ar[0];		/* Address of first element */
 
-	ar10i = &ar		/* Address of the whole array */
+	ar10i = &ar;		/* Address of the whole array */
 }
