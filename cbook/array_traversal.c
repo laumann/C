@@ -9,5 +9,5 @@ main()
 	for (ip = &ar[0]; ip < &ar[20]; ip++)
 		*ip = 0;
 
-	exit(EXIT_SUCCESS);
+	return 0;
 }
